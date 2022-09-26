@@ -1,2 +1,2 @@
-# cult_discord_bot
+# Sekte Bot
  A custom Cult Discord Bot for a Discord Server
