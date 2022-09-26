@@ -37,6 +37,7 @@ def handle_message(m):
 	# Note to 'messages', every message and image included start with a number, represententing their order (example: 1text) this should be ignored, also
 	# there are only 'text' and 'image' reponses until now, they get handled in main.
 
+	# Moon Command, gets current moon phase.
 	if m == "moon":
 		reponse["message"] = True
 		reponse["multiple"] = True
@@ -45,6 +46,11 @@ def handle_message(m):
 		# Get Moon Phase Image and store it, returns a path
 		reponse["messages"]["1image"] = moon_api.get_c_mphase_image()
 		# Return Reponse
+		return reponse
+
+	# If Command is empty
+	if m == "":
+		reponse = {"message": False}
 		return reponse
 
 # Debugging
