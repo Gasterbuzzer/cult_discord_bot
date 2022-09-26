@@ -5,13 +5,15 @@ import discord
 
 import respond_message
 
-# Just some functions
+# Just some variables definitions
 
 start_activity = "with your feelings."
 
 # Defining functions to use, much easier if done so.
 
+# This is complicated, so many comments
 async def send_message(message, user_message):
+	"""Sends message to channel"""
 	try:
 		# From repond_message we get what to answer. This gets stored.
 		reponse = respond_message.handle_reponse(user_message)
@@ -20,29 +22,36 @@ async def send_message(message, user_message):
 
 		# If there is an reponse, we answer.
 		if reponse["message"] == True:
-			if reponse["multiple"] == True:
+			if reponse["multiple"] == True: # If there are multiple reponses, do this
 
 				print(f"Chat Sending Log: Sending multiple things: ")
 
 				for i in reponse["messages"]:
+					# We loop through all messages and react according to what type they are (image or text)
+					# We must remove/ignore the first number infront of type, so that we can check it, the number is for order, is not important for printing however.
 
-					if i[1:] == "text":
+					if i[1:] == "text": 
+						# If text send the text to the channel.
 						await message.channel.send(reponse["messages"][i])
 						print(f"\tText: '{reponse['messages'][i]}'")
 
 					elif i[1:] == "image":
-						# Image location is in given string.
+						# Send Image if image. Does not show in console for obvious resons.
+						# Image location is the return.
 						await message.channel.send(file=discord.File(reponse['messages'][i]))
 						print(f"\tImage: Image in Channel (Not showing in console) (Image Location: {reponse['messages'][i]})")
 
 			else:
-
+				# If theres only one respond, only send that. Does not support images for now.
 				print(f"Chat Sending Log: Sending message/image: {reponse['messages']}")
 				await message.channel.send(list(reponse["messages"].values())[0])
 
 	except Exception as e:
 		print(e)
 		# Just if something bad happens, we can react and not crash.
+
+
+
 
 # Bot stuff here.
 
@@ -87,6 +96,7 @@ def run_bot():
 	client.run(token)
 	
 
+# Main
 if __name__ == "__main__":
 	# Start Bot if file is started as main.
 	run_bot()
