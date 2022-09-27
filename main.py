@@ -44,8 +44,24 @@ async def send_message(message, user_message):
 					elif i[1:] == "embed":
 						# Send embed.
 						embed = reponse['messages'][i]
-						await message.channel.send(embed=embed)
-						print(f"\tEmbed: Embed send to channel.")
+
+						# Incase there is no file or image.
+						try:
+							file = reponse['messages']['0e_image']
+						except:
+							file = None
+
+						if file: # Check if file exists, if not ignore.	
+
+							await message.channel.send(file=file, embed=embed)
+							print(f"\tEmbed: Embed with image send to channel.")
+						else:
+							await message.channel.send(embed=embed)
+							print(f"\tEmbed: Embed send to channel.")
+
+					elif i[1:] == "e_image":
+						# Ignore if the object is e_image.
+						continue
 
 			else:
 				# If theres only one respond, only send that. Does not support images for now.
