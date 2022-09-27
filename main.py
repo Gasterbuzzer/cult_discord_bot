@@ -7,7 +7,7 @@ import respond_message
 
 # Just some variables definitions
 
-start_activity = "with your feelings."
+start_activity = "use $help for all commands."
 
 # Defining functions to use, much easier if done so.
 
@@ -40,6 +40,12 @@ async def send_message(message, user_message):
 						# Image location is the return.
 						await message.channel.send(file=discord.File(reponse['messages'][i]))
 						print(f"\tImage: Image in Channel (Not showing in console) (Image Location: {reponse['messages'][i]})")
+
+					elif i[1:] == "embed":
+						# Send embed.
+						embed = reponse['messages'][i]
+						await message.channel.send(embed=embed)
+						print(f"\tEmbed: Embed send to channel.")
 
 			else:
 				# If theres only one respond, only send that. Does not support images for now.

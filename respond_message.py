@@ -3,6 +3,9 @@
 # Imports
 import json
 
+# Imports other library
+import discord
+
 # Import custom (mine) libraries
 import moon_api
 
@@ -57,6 +60,7 @@ def handle_message(m):
 		reponse["messages"]["1text"] = f"The fullmoon is on the {fullmoon_day_text} of {moon_api.get_current_month_text()}."
 		return reponse
 
+	# Nextfullmoon Command, gets the next coming fullmoon.
 	if m == "nextfullmoon":
 		reponse["message"] = True
 		reponse["multiple"] = False
@@ -72,6 +76,29 @@ def handle_message(m):
 			fullmoon_day = moon_api.get_fullmoon(month=moon_api.get_next_month_current())
 			fullmoon_day_text = f"{fullmoon_day}{moon_api.get_ending_day(fullmoon_day)}"
 			reponse["messages"]["1text"] = f"The fullmoon is on the {fullmoon_day_text} of {moon_api.get_given_month_text(month=moon_api.get_next_month_current())}."
+		return reponse
+
+	# Help Command to show all commands.
+	if m == "help":
+		reponse["message"] = True
+		reponse["multiple"] = True
+
+		prefix = read_settings("prefix")
+
+		embed = discord.Embed(
+			title = "All Commands:",
+			description = "List of all commands in the bot.",
+			colour = discord.Colour.yellow(),
+			)
+
+		embed.add_field(name=f"{prefix}help", value="Show all commands. (This here)", inline = False)
+		embed.add_field(name=f"{prefix}moon", value="Show the current Moon State", inline = False)
+		embed.add_field(name=f"{prefix}fullmoon", value="Show when the fullmoon this month was.", inline = False)
+		embed.add_field(name=f"{prefix}nextfullmoon", value="Show when the next fullmoon is **'coming'** in the future.", inline = False)
+
+		embed.set_footer(text="Sekte Bot Help")
+
+		reponse["messages"]["1embed"] = embed
 		return reponse
 
 	# If Command is empty
