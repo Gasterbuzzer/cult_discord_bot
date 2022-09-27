@@ -48,6 +48,32 @@ def handle_message(m):
 		# Return Reponse
 		return reponse
 
+	# Fullmoon Command, gets the date for the full moon.
+	if m == "fullmoon":
+		reponse["message"] = True
+		reponse["multiple"] = False
+		fullmoon_day = moon_api.get_fullmoon()
+		fullmoon_day_text = f"{fullmoon_day}{moon_api.get_ending_day(fullmoon_day)}"
+		reponse["messages"]["1text"] = f"The fullmoon is on the {fullmoon_day_text} of {moon_api.get_current_month_text()}."
+		return reponse
+
+	if m == "nextfullmoon":
+		reponse["message"] = True
+		reponse["multiple"] = False
+		fullmoon_day = moon_api.get_fullmoon()
+		if not moon_api.is_fullmoon_over(fullmoon_day):
+			# Get fullmoon of current month.
+			print("Debug Log: Sending Fullmoon of this month.")
+			fullmoon_day_text = f"{fullmoon_day}{moon_api.get_ending_day(fullmoon_day)}"
+			reponse["messages"]["1text"] = f"The fullmoon is on the {fullmoon_day_text} of {moon_api.get_current_month_text()}."
+		else:
+			# Get fullmoon of next month.
+			print(f"Debug Log: Sending Fullmoon of next month ({moon_api.get_next_month_current()}).")
+			fullmoon_day = moon_api.get_fullmoon(month=moon_api.get_next_month_current())
+			fullmoon_day_text = f"{fullmoon_day}{moon_api.get_ending_day(fullmoon_day)}"
+			reponse["messages"]["1text"] = f"The fullmoon is on the {fullmoon_day_text} of {moon_api.get_given_month_text(month=moon_api.get_next_month_current())}."
+		return reponse
+
 	# If Command is empty
 	if m == "":
 		reponse = {"message": False}
@@ -56,7 +82,7 @@ def handle_message(m):
 # Debugging
 if __name__ == "__main__":
 	# Is used to test different reponses.
-	repons = handle_reponse("$moon")["messages"]
+	repons = handle_reponse("$nextfullmoon")
 	print(list(repons.values())[0])
 	#for i in repons.values():
 		#print(i)
