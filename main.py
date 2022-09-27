@@ -57,6 +57,7 @@ async def send_message(message, user_message):
 
 def run_bot():
 	"""Runs the bot and enables all asyncs."""
+	print(f"Debug Log: Project from 'https://github.com/Gasterbuzzer/cult_discord_bot'.")
 	# Enable intents
 	intents = discord.Intents.all()
 	intents.message_content = True
