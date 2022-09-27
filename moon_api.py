@@ -157,6 +157,8 @@ def get_current_month_text():
 
 def get_given_month_text(month):
 	"""Returns the given number Month as text."""
+	if month == "Next Year":
+		return "of Next Year"
 	month = int(month)
 	_month = calendar.month_name[month]
 	return _month
@@ -178,5 +180,5 @@ if __name__ == "__main__":
 	# Used to test functions
 	#print(get_current_moonphase())
 	#print(get_c_mphase_image())
-	#print(get_fullmoon(get_next_month_current()))
-	print(is_fullmoon_over(10))
+	print(get_fullmoon(13))
+	#print(is_fullmoon_over(10))
