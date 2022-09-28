@@ -161,3 +161,6 @@ files/discordt.txt
 
 # Ignore moon image
 files/images/moon_phase.jpg
+
+# Ignore user data
+files/users/

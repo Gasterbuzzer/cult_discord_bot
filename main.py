@@ -1,13 +1,20 @@
 # Main File for Discord Bot
 
-# Imports
+# Import Default
+
+import json
+
+# Import Custom libraries
 import discord
 
+# Import my librariers
 import respond_message
 
 # Just some variables definitions
 
 start_activity = "use $help for all commands."
+
+path_user = "files/users/"
 
 # Defining functions to use, much easier if done so.
 
@@ -69,11 +76,91 @@ async def send_message(message, user_message):
 				await message.channel.send(list(reponse["messages"].values())[0])
 
 	except Exception as e:
-		print(e)
+		print("Error could not send message.")
+		print(f"Error Log: {e}")
 		# Just if something bad happens, we can react and not crash.
 
 
+async def gain_exp_user(author):
+	"""Function that gives an user xp."""
+	# Default (0) EXP and Rank:
+	username = str(author)
+	data_to_save = {"username": username, "exp": 0, "rank": 0,}
+	exp = data_to_save["exp"]
+	rank = data_to_save["rank"]
 
+	# Creating path to user file.
+	path = path_user + f"{username}.json"
+	try:
+		with open(path, "r") as f:
+			# Load the data of user.
+			data = json.load(f)
+			data_to_save["rank"] = data["rank"]
+			# Trying to load user data if existant
+			try:
+				exp = data["exp"]
+			except:
+				exp = 1
+
+			# Increase EXP
+			exp += 1
+
+			data_to_save["exp"] = exp
+			# Save the file.
+			with open(path, "w") as f:
+				json.dump(data_to_save, f)
+
+	except Exception as e:
+		print(f"Debug Log: File for user was not found, creating a new one for {username}.")
+		#print(f"Error Log: Error detail: {e}")
+		with open(path, "w") as f:
+			# Write data if not found.
+			data_to_save["exp"] = 1
+
+			# Get rank (no rank = 0)
+			# Rank "The Gravekeeper of the fith" = 1
+			# Rank "The Quatroguards" = 2
+			# Rank "The third prayer" = 3
+			# Rank "The second circle" = 4
+			# Rank "The choosen ascending" = 5
+			# Rank "One of the first" = 6
+
+			# If we can't find a role, we default to 0
+			role_found = False
+
+			for role in author.roles:
+				# Loop through roles and find the ones.
+				if role.id == 817941435998535689:
+					data_to_save["rank"] = 1
+					role_found = True
+					break
+				elif role.id == 817940839404797982:
+					data_to_save["rank"] = 2
+					role_found = True
+					break
+				elif role.id == 815231250843435018:
+					data_to_save["rank"] = 3
+					role_found = True
+					break
+				elif role.id == 817935867829682236: # We load 5 earlier, since it could appear earlier than expected.
+					data_to_save["rank"] = 5
+					role_found = True
+					break
+				elif role.id == 815230234411532288:
+					data_to_save["rank"] = 4
+					role_found = True
+					break	
+				elif role.id == 815015673935691816:
+					data_to_save["rank"] = 6
+					role_found = True
+					break
+				else:
+					continue
+
+			if role_found == False:
+				data_to_save["rank"] = 0
+
+			json.dump(data_to_save, f)
 
 # Bot stuff here.
 
@@ -106,6 +193,7 @@ def run_bot():
 
 		# Note that message is the give parameter from the event async, user_message is just a string from it.
 		await send_message(message, user_message)
+		await gain_exp_user(message.author)
 
 	# Read Bot Token from File.
 	token = None
