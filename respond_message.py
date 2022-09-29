@@ -165,10 +165,10 @@ def handle_message(m, all_m, all_m_without_, client_r):
 
     # Command to get data of a specified user.
     if all_m_without_[0] == "getuser":
-        if len(all_m_without_) > 2:
-            return raise_error(1, response)
         response["message"] = True
         response["multiple"] = True
+        if len(all_m_without_) > 2:
+            return raise_error(1, response)
 
         id_u = int(all_m_without_[1])
 
@@ -196,6 +196,7 @@ def handle_message(m, all_m, all_m_without_, client_r):
 def raise_error(number, _response):
     if number == 1:
         _response["messages"]["1text"] = "Error: Unexpected size, please use command correctly."
+        print(_response)
         return _response
 
 
