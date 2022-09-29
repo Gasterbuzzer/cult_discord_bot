@@ -156,7 +156,9 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
         embed.add_field(name=f"{prefix}fullmoon", value="Show when the fullmoon this month **'was'**.", inline=False)
         embed.add_field(name=f"{prefix}nextfullmoon",
                         value="Show when the next fullmoon is **'coming'** in the future.", inline=False)
-        embed.add_field(name=f"{prefix}getuser", value="Shows the EXP and Rank of a User in the server.", inline=False)
+        embed.add_field(name=f"{prefix}getuser", value="Shows the EXP and Rank of a User in the server.", inline=True)
+        embed.add_field(name=f"Example", value=f"**'{prefix}getuser @Lucas**'", inline=True)
+        # embed.add_field(name=f"Test Line", value=f"{prefix}Test Text", inline=False)
 
         embed.set_thumbnail(
             url="attachment://image.png")  # Use the attachment url inorder to use local files and/or images
@@ -272,7 +274,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
 
         # Gets url of avatar, yes I suffered finding the url out.
         url_a = member_guild.avatar.url
-        print(url_a)
+        # print(url_a)
 
         # Old but could be helpful
         # url = f"https://cdn.discordapp.com/avatars/{member_guild.id}/{member_guild.avatar.url}.png?size=1024"
