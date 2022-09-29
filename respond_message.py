@@ -199,7 +199,7 @@ def raise_error(number, _response):
 # Debugging
 if __name__ == "__main__":
     # Is used to test different responses.
-    response = handle_response("$nextfullmoon")
+    response = handle_response("$nextfullmoon", discord.Client())
     print(list(response.values())[0])
 # for i in response.values():
 # print(i)
