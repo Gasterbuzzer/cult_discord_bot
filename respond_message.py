@@ -295,6 +295,9 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
         response["multiple"] = True
         print(f"Debug Log: All Input: {all_m_without_}")
 
+        if len(all_m_without_) > 1:
+            print(f"Debug Log: Input 1 is {all_m_without_[1]}.")
+
         response["messages"]["1text"] = "Input in Console."
         return response
 
