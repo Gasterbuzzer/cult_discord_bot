@@ -59,12 +59,11 @@ async def send_message(message, user_message, client):
                         # Incase there is no file or image.
                         try:
                             file = response['messages']['0e_image']
-                        except ValueError:
+                        except Exception:
                             file = None
 
                         # Check if file exists, if not ignore.
                         if file:
-
                             await message.channel.send(file=file, embed=embed)
                             print(f"\tEmbed: Embed with image send to channel.")
                         else:

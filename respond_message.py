@@ -168,7 +168,7 @@ def handle_message(m, all_m, all_m_without_, client_r):
         response["message"] = True
         response["multiple"] = True
         if len(all_m_without_) > 2:
-            return raise_error(1, response)
+            return raise_error(1, response, all_m_without_[2:], m, len(all_m_without_)-2, 1)
 
         id_u = int(all_m_without_[1])
 
@@ -193,12 +193,30 @@ def handle_message(m, all_m, all_m_without_, client_r):
 
 
 # Displays an error if called to the user.
-def raise_error(number, _response):
+def raise_error(number, _response, problem, full_command, amount_problem=1, amount_normal=1):
     _response["message"] = True
     _response["multiple"] = True
     if number == 1:
-        _response["messages"]["1text"] = "Error: Unexpected size, please use command correctly."
-        print(_response)
+        embed = discord.Embed(
+            title="Error:",
+            description= "Got too many arguments in command.",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        embed.add_field(name=f"Your Command: ",
+                        value=f"**'{full_command}'**",
+                        inline=False)
+
+        error_text = f""
+        for error in problem:
+            error_text += f"\n**'{error}'**"
+
+        embed.add_field(name=f"Only expected {amount_normal} but got {amount_problem} instead: ",
+                        value=f"{error_text}",
+                        inline=False)
+        _response["messages"]["1embed"] = embed
+
         return _response
 
 
