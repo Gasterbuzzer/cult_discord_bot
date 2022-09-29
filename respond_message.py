@@ -28,8 +28,6 @@ def handle_response(message, client):
     """Function to handling messages"""
     message_lower = message.lower()
 
-    client_r = client
-
     messages_all = re.findall(r"\w+", message_lower)
     messages_all_without_ = re.findall(r"\w+", message_lower[1:])
 
