@@ -59,7 +59,7 @@ async def send_message(message, user_message, client):
                         # Incase there is no file or image.
                         try:
                             file = response['messages']['0e_image']
-                        except Exception:
+                        except ValueError:
                             file = None
 
                         # Check if file exists, if not ignore.
@@ -91,7 +91,7 @@ async def send_message(message, user_message, client):
 
 
 async def gain_exp_user(author):
-    """Function that gives an user xp."""
+    """Function that gives a user xp."""
     # Default (0) EXP and Rank:
     username = str(author)
     data_to_save = {"username": username, "exp": 0, "rank": 0, }
