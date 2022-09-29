@@ -59,7 +59,7 @@ async def send_message(message, user_message, client):
                         # Incase there is no file or image.
                         try:
                             file = response['messages']['0e_image']
-                        except ValueError:
+                        except Exception:
                             file = None
 
                         # Check if file exists, if not ignore.
