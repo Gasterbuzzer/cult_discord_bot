@@ -3,8 +3,6 @@
 # Imports
 import json
 import re
-import urllib
-import asyncio
 
 # Imports other library
 import discord
@@ -355,7 +353,8 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
 # Debugging
 if __name__ == "__main__":
     # Is used to test different responses.
-    response = handle_response("$nextfullmoon", discord.Client())
-    print(list(response.values())[0])
+    # response = handle_response("$nextfullmoon", discord.Client())
+    # print(list(response.values())[0])
+    print("True")
 # for i in response.values():
 # print(i)
