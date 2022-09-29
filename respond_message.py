@@ -194,6 +194,8 @@ def handle_message(m, all_m, all_m_without_, client_r):
 
 # Displays an error if called to the user.
 def raise_error(number, _response):
+    _response["message"] = True
+    _response["multiple"] = True
     if number == 1:
         _response["messages"]["1text"] = "Error: Unexpected size, please use command correctly."
         print(_response)
