@@ -164,3 +164,11 @@ files/images/moon_phase.jpg
 
 # Ignore user data
 files/users/
+
+# Ignore .idea
+.idea/
+.idea/cult_discord_bot.iml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml

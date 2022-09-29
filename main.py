@@ -19,46 +19,49 @@ path_user = "files/users/"
 # Defining functions to use, much easier if done so.
 
 # This is complicated, so many comments
-async def send_message(message, user_message):
+async def send_message(message, user_message, client):
 	"""Sends message to channel"""
 	try:
-		# From repond_message we get what to answer. This gets stored.
-		reponse = respond_message.handle_reponse(user_message)
+		# From respond_message we get what to answer. This gets stored.
+		response = respond_message.handle_response(user_message, client)
 
 		#await message.author.send(reponse) For private message
 
-		# If there is an reponse, we answer.
-		if reponse["message"] == True:
-			if reponse["multiple"] == True: # If there are multiple reponses, do this
+		# If there is a response, we answer.
+		if response["message"]:
+			# If there are multiple responses, do this
+			if response["multiple"]:
 
 				print(f"Chat Sending Log: Sending multiple things: ")
 
-				for i in reponse["messages"]:
-					# We loop through all messages and react according to what type they are (image or text)
-					# We must remove/ignore the first number infront of type, so that we can check it, the number is for order, is not important for printing however.
+				for i in response["messages"]:
+					# We loop through all messages and react according to what type they are (image or text) We must
+					# remove/ignore the first number in front of type, so that we can check it, the number is for
+					# order, is not important for printing, however.
 
-					if i[1:] == "text": 
+					if i[1:] == "text":
 						# If text send the text to the channel.
-						await message.channel.send(reponse["messages"][i])
-						print(f"\tText: '{reponse['messages'][i]}'")
+						await message.channel.send(response["messages"][i])
+						print(f"\tText: '{response['messages'][i]}'")
 
 					elif i[1:] == "image":
-						# Send Image if image. Does not show in console for obvious resons.
+						# Send Image if it is an image. Does not show in console for obvious response.
 						# Image location is the return.
-						await message.channel.send(file=discord.File(reponse['messages'][i]))
-						print(f"\tImage: Image in Channel (Not showing in console) (Image Location: {reponse['messages'][i]})")
+						await message.channel.send(file=discord.File(response['messages'][i]))
+						print(f"\tImage: Image in Channel (Not showing in console) (Image Location: {response['messages'][i]})")
 
 					elif i[1:] == "embed":
 						# Send embed.
-						embed = reponse['messages'][i]
+						embed = response['messages'][i]
 
 						# Incase there is no file or image.
 						try:
-							file = reponse['messages']['0e_image']
-						except:
+							file = response['messages']['0e_image']
+						except ValueError:
 							file = None
 
-						if file: # Check if file exists, if not ignore.	
+						# Check if file exists, if not ignore.
+						if file:
 
 							await message.channel.send(file=file, embed=embed)
 							print(f"\tEmbed: Embed with image send to channel.")
@@ -71,14 +74,17 @@ async def send_message(message, user_message):
 						continue
 
 			else:
-				# If theres only one respond, only send that. Does not support images for now.
-				print(f"Chat Sending Log: Sending message/image: {reponse['messages']}")
-				await message.channel.send(list(reponse["messages"].values())[0])
+				# If there's only one respond, only send that. Does not support images for now.
+				print(f"Chat Sending Log: Sending message/image: {response['messages']}")
+				await message.channel.send(list(response["messages"].values())[0])
 
 	except Exception as e:
 		print("Error could not send message.")
 		print(f"Error Log: {e}")
+		# print(e)
 		# Just if something bad happens, we can react and not crash.
+	# except ValueError:
+		# print("What")
 
 
 async def gain_exp_user(author):
@@ -96,12 +102,8 @@ async def gain_exp_user(author):
 			# Load the data of user.
 			data = json.load(f)
 			data_to_save["rank"] = data["rank"]
-			# Trying to load user data if existant
-			try:
-				exp = data["exp"]
-			except:
-				exp = 1
-
+			# Trying to load user data if existent
+			exp = data["exp"]
 			# Increase EXP
 			exp += 1
 
@@ -112,13 +114,13 @@ async def gain_exp_user(author):
 
 	except Exception as e:
 		print(f"Debug Log: File for user was not found, creating a new one for {username}.")
-		#print(f"Error Log: Error detail: {e}")
+		# print(f"Error Log: Error detail: {e}")
 		with open(path, "w") as f:
 			# Write data if not found.
 			data_to_save["exp"] = 1
 
 			# Get rank (no rank = 0)
-			# Rank "The Gravekeeper of the fith" = 1
+			# Rank "The Gravekeeper of the fifth" = 1
 			# Rank "The Quatroguards" = 2
 			# Rank "The third prayer" = 3
 			# Rank "The second circle" = 4
@@ -149,7 +151,7 @@ async def gain_exp_user(author):
 				elif role.id == 815230234411532288:
 					data_to_save["rank"] = 4
 					role_found = True
-					break	
+					break
 				elif role.id == 815015673935691816:
 					data_to_save["rank"] = 6
 					role_found = True
@@ -157,7 +159,7 @@ async def gain_exp_user(author):
 				else:
 					continue
 
-			if role_found == False:
+			if not role_found:
 				data_to_save["rank"] = 0
 
 			json.dump(data_to_save, f)
@@ -192,7 +194,7 @@ def run_bot():
 		print(f"Chat Message Log: '{username}' has send the message '{user_message}' in '{channel}'.")
 
 		# Note that message is the give parameter from the event async, user_message is just a string from it.
-		await send_message(message, user_message)
+		await send_message(message, user_message, client)
 		await gain_exp_user(message.author)
 
 	# Read Bot Token from File.
@@ -201,11 +203,11 @@ def run_bot():
 	with open("files/discordt.txt") as f:
 		token = f.read()
 		print("Debug Log: Token grabbed.")
-		
+
 	# Start Bot
 	print("Debug Log: Bot is starting to run...")
 	client.run(token)
-	
+
 
 # Main
 if __name__ == "__main__":
