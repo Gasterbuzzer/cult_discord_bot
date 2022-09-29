@@ -3,12 +3,15 @@
 # Imports
 import json
 import re
+import urllib
+import asyncio
 
 # Imports other library
 import discord
 
 # Import custom (mine) libraries
 import moon_api
+import rank_lib
 
 
 def read_settings(search):
@@ -24,7 +27,7 @@ def read_settings(search):
             return 1
 
 
-def handle_response(message, client):
+def handle_response(message, client, message_object):
     """Function to handling messages"""
     message_lower = message.lower()
 
@@ -33,13 +36,13 @@ def handle_response(message, client):
 
     if message_lower[:1] == read_settings("prefix"):
         # Every Response should be a dictionary containing a True or False, if there are multiple messages.
-        return handle_message(message_lower[1:], messages_all, messages_all_without_, client)
+        return handle_message(message_lower[1:], messages_all, messages_all_without_, client, message_object)
     else:
         # If Message was not with a prefix, return no message
         return {"message": False}
 
 
-def handle_message(m, all_m, all_m_without_, client_r):
+def handle_message(m, all_m, all_m_without_, client_r, message_object):
     """ Method checking what the command was and sending appropriate Message """
     # Default Response layout, message is if there is a message, multiple is if there are multiple responses,
     # messages contains all messages
@@ -153,6 +156,7 @@ def handle_message(m, all_m, all_m_without_, client_r):
         embed.add_field(name=f"{prefix}fullmoon", value="Show when the fullmoon this month **'was'**.", inline=False)
         embed.add_field(name=f"{prefix}nextfullmoon",
                         value="Show when the next fullmoon is **'coming'** in the future.", inline=False)
+        embed.add_field(name=f"{prefix}getuser", value="Shows the EXP and Rank of a User in the server.", inline=False)
 
         embed.set_thumbnail(
             url="attachment://image.png")  # Use the attachment url inorder to use local files and/or images
@@ -168,13 +172,121 @@ def handle_message(m, all_m, all_m_without_, client_r):
         response["message"] = True
         response["multiple"] = True
         if len(all_m_without_) > 2:
-            return raise_error(1, response, all_m_without_[2:], m, len(all_m_without_)-2, 1)
+            return raise_error(1, response, all_m_without_[2:], m, len(all_m_without_) - 1, 1)
+        try:
+            id_u = int(all_m_without_[1])
+        except ValueError:
+            return raise_error(2, response, all_m_without_[1], m)
 
-        id_u = int(all_m_without_[1])
+        member_guild = message_object.guild.get_member(id_u)
+        embed = discord.Embed(
+            title=f"User {str(client_r.get_user(id_u))}:",
+            colour=discord.Colour.yellow(),
+        )
+        embed.set_footer(text="Sekte Bot")
 
-        response["messages"]["1text"] = f"User: " + str(client_r.get_user(id_u))
+        path = "files/users/" + f"{str(client_r.get_user(id_u))}.json"
+        data = {"username": str(client_r.get_user(id_u)), "exp": 0, "rank": 0}
+        is_new = False
+        try:
+            with open(path, "r") as f:
+                # Load the data of user.
+                data = json.load(f)
+                rank = data["rank"]
+                exp = data["exp"]
+        except FileNotFoundError:
+            # Create user file
+            is_new = True
+            print(f"Debug Log: File for user was not found, creating a new one for {str(client_r.get_user(id_u))}.")
+            with open(path, "w") as f:
+                # Write data if not found.
+                data["exp"] = 1
+
+                # Get rank (no rank = 0)
+                # Rank "The Gravekeeper of the fifth" = 1
+                # Rank "The Quatroguards" = 2
+                # Rank "The third prayer" = 3
+                # Rank "The second circle" = 4
+                # Rank "The choosen ascending" = 5
+                # Rank "One of the first" = 6
+
+                # If we can't find a role, we default to 0
+                role_found = False
+
+                for role in member_guild.roles:
+                    # Loop through roles and find the ones.
+                    if role.id == 817941435998535689:
+                        data["rank"] = 1
+                        role_found = True
+                        break
+                    elif role.id == 817940839404797982:
+                        data["rank"] = 2
+                        role_found = True
+                        break
+                    elif role.id == 815231250843435018:
+                        data["rank"] = 3
+                        role_found = True
+                        break
+                    elif role.id == 817935867829682236:  # We load 5 earlier, since it could appear earlier than
+                        # expected.
+                        data["rank"] = 5
+                        role_found = True
+                        break
+                    elif role.id == 815230234411532288:
+                        data["rank"] = 4
+                        role_found = True
+                        break
+                    elif role.id == 815015673935691816:
+                        data["rank"] = 6
+                        role_found = True
+                        break
+                    elif role.id == 826114593830993933:
+                        data["rank"] = 7
+                        role_found = True
+                    else:
+                        continue
+
+                if not role_found:
+                    data["rank"] = 0
+
+                json.dump(data, f)
+
+        if is_new:
+            with open(path, "r") as f:
+                # Load the data of user.
+                data = json.load(f)
+                rank = data["rank"]
+                exp = data["exp"]
+
+        rank_name = "No rank"
+        rank_name = rank_lib.get_rank(rank)
+
+        # Add fields.
+        embed.add_field(name=f"EXP: ",
+                        value=f"**{exp}**",
+                        inline=True)
+
+        embed.add_field(name=f"Rank: ",
+                        value=f"**'{rank_name}'**",
+                        inline=True)
+
+        # Gets url of avatar, yes I suffered finding the url out.
+        url_a = member_guild.avatar.url
+        print(url_a)
+
+        # Old but could be helpful
+        # url = f"https://cdn.discordapp.com/avatars/{member_guild.id}/{member_guild.avatar.url}.png?size=1024"
+        # urllib.request.urlretrieve(url, "files/images/member.png")
+        # file = discord.File("files/images/member.png", filename="member.png")
+
+        embed.set_image(url=url_a)
+
+        response["messages"]["1embed"] = embed
+
+        response["messages"]["0e2_image"] = url_a
+
         # print(f"Debug Log: User Test Found: {str(client_r.get_user(214730164813299712))}") A test to see if works.
-        print(f"Debug Log: User Found: {str(client_r.get_user(id_u))}")
+        # print(f"Debug Log: User Found: {str(client_r.get_user(id_u))}")
         return response
 
     # Test Command to see all parameters.
@@ -199,7 +311,7 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
     if number == 1:
         embed = discord.Embed(
             title="Error:",
-            description= "Got too many arguments in command.",
+            description="Got too many arguments in command.",
             colour=discord.Colour.red(),
         )
         embed.set_footer(text="Sekte Bot")
@@ -214,6 +326,24 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
 
         embed.add_field(name=f"Only expected {amount_normal} but got {amount_problem} instead: ",
                         value=f"{error_text}",
+                        inline=False)
+        _response["messages"]["1embed"] = embed
+
+        return _response
+    elif number == 2:
+        embed = discord.Embed(
+            title="Error:",
+            description="You did not provide a Username",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        embed.add_field(name=f"Your Command: ",
+                        value=f"**'{full_command}'**",
+                        inline=False)
+
+        embed.add_field(name=f"Expected Username (Example @SekteBot) but did not get Username: ",
+                        value=f"{problem}",
                         inline=False)
         _response["messages"]["1embed"] = embed
 

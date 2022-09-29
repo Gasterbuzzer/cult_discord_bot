@@ -24,7 +24,7 @@ async def send_message(message, user_message, client):
     """Sends message to channel"""
     try:
         # From respond_message we get what to answer. This gets stored.
-        response = respond_message.handle_response(user_message, client)
+        response = respond_message.handle_response(user_message, client, message)
 
         # await message.author.send(response) For private message
 
@@ -115,7 +115,7 @@ async def gain_exp_user(author):
             with open(path, "w") as f:
                 json.dump(data_to_save, f)
 
-    except Exception as e:
+    except FileNotFoundError:
         print(f"Debug Log: File for user was not found, creating a new one for {username}.")
         # print(f"Error Log: Error detail: {e}")
         with open(path, "w") as f:
@@ -159,6 +159,9 @@ async def gain_exp_user(author):
                     data_to_save["rank"] = 6
                     role_found = True
                     break
+                elif role.id == 826114593830993933:
+                    data["rank"] = 7
+                    role_found = True
                 else:
                     continue
 
