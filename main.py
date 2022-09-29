@@ -196,6 +196,7 @@ def run_bot():
         username = str(message.author)
         user_message = str(message.content)
         channel = str(message.channel)
+
         print(f"Chat Message Log: '{username}' has send the message '{user_message}' in '{channel}'.")
 
         # Note that message is the give parameter from the event async, user_message is just a string from it.

@@ -35,7 +35,7 @@ def handle_response(message, client):
 
     if message_lower[:1] == read_settings("prefix"):
         # Every Response should be a dictionary containing a True or False, if there are multiple messages.
-        return handle_message(message_lower[1:], messages_all, messages_all_without_, client_r)
+        return handle_message(message_lower[1:], messages_all, messages_all_without_, client)
     else:
         # If Message was not with a prefix, return no message
         return {"message": False}
@@ -165,21 +165,25 @@ def handle_message(m, all_m, all_m_without_, client_r):
         response["messages"]["0e_image"] = file
         return response
 
+    # Command to get data of a specified user.
     if all_m_without_[0] == "getuser":
         if len(all_m_without_) > 2:
             return raise_error(1, response)
         response["message"] = True
         response["multiple"] = True
 
-        id_u = all_m_without_[1]
+        id_u = int(all_m_without_[1])
 
-        response["messages"]["1text"] = client_r.get_user(id_u)
+        response["messages"]["1text"] = f"User: " + str(client_r.get_user(id_u))
+        # print(f"Debug Log: User Test Found: {str(client_r.get_user(214730164813299712))}") A test to see if works.
+        print(f"Debug Log: User Found: {str(client_r.get_user(id_u))}")
         return response
 
+    # Test Command to see all parameters.
     if all_m_without_[0] == "test":
         response["message"] = True
         response["multiple"] = True
-        print(f"Debug Log: All Input: {all_m_without_[1]}")
+        print(f"Debug Log: All Input: {all_m_without_}")
 
         response["messages"]["1text"] = "Input in Console."
         return response
