@@ -194,9 +194,10 @@ def handle_message(m, all_m, all_m_without_, client_r):
         return response_fallback
 
 
+# Displays an error if called to the user.
 def raise_error(number, _response):
     if number == 1:
-        _response["messages"]["text"] = "Error: Unexpected size, please use command correctly."
+        _response["messages"]["1text"] = "Error: Unexpected size, please use command correctly."
         return _response
 
 
