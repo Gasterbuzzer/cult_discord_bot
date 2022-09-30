@@ -343,6 +343,15 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
 
         rank_name = rank_lib.get_rank(rank)
 
+        try:
+            with open(path, "w") as f:
+                # Load the data of user.
+                data["rank"] = rank
+                data["exp"] = exp
+                json.dump(data, f)
+        except FileNotFoundError:
+            print("Error Log: Could not find file even if created.")
+
         # Add fields.
         embed.add_field(name=f"User is now rank: ",
                         value=f"**{rank_name}**",
@@ -351,6 +360,10 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
         embed.add_field(name=f"**Congrats to your new Rank**",
                         value=f"**'{str(client_r.get_user(id_u))}'**",
                         inline=True)
+
+        embed.add_field(name=f"**Note: This is currently a test, not ranking up.**",
+                        value=f"**'Test'**",
+                        inline=False)
 
         url_a = member_guild.avatar.url
 
@@ -378,6 +391,10 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
     if m == "":
         response_fallback = {"message": False}
         return response_fallback
+
+    # Incase nothing happens just ignore it.
+    response_fallback = {"message": False}
+    return response_fallback
 
 
 # Displays an error if called to the user.
@@ -433,7 +450,7 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         embed.set_footer(text="Sekte Bot")
 
         embed.add_field(name=f"The User {str(client_r.get_user(id_u))}: ",
-                        value=f"Does not have 100exp to rank up.",
+                        value=f"Does not have 100 EXP to rank up.",
                         inline=False)
 
         _response["messages"]["1embed"] = embed
