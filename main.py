@@ -73,6 +73,34 @@ async def send_message(message, user_message, client):
                     elif i[1:] == "e_image":
                         # Ignore if the object is e_image.
                         continue
+                    elif i[1:] == "action":
+                        # If an action is required that must be called async or whatever.
+                        if response['messages'][i]['action'] == "addrole":
+                            # Default Layout {"action": "addrole", "member": member_guild, "role":
+                            # rank_lib.get_rank_id(rank), "user_id": id_u}
+
+                            guild_member = response['messages'][i]['member']
+                            rank = response['messages'][i]['role']
+                            rank_role = message.guild.get_role(rank)
+                            user_id = response['messages'][i]['user_id']
+                            username = str(client.get_user(user_id))
+
+                            await guild_member.add_roles(rank_role, reason="User ranked up.")
+                            print(f"Debug Log: Added Role: {rank} for {username}")
+
+                        elif response['messages'][i]['action'] == "removerole":
+                            # Remove Roll from user
+
+                            guild_member = response['messages'][i]['member']
+                            rank = response['messages'][i]['role']
+                            rank_role = message.guild.get_role(rank)
+                            user_id = response['messages'][i]['user_id']
+                            username = str(client.get_user(user_id))
+
+                            await guild_member.remove_roles(rank_role, reason="User ranked up.")
+                            print(f"Debug Log: Removed Role: {rank} for {username}")
+
+                        continue
 
             else:
                 # If there's only one respond, only send that. Does not support images for now.
@@ -82,6 +110,7 @@ async def send_message(message, user_message, client):
     except Exception as e:
         print("Error could not send message.")
         print(f"Error Log: {e}")
+
     # print(e)
     # Just if something bad happens, we can react and not crash.
 

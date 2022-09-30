@@ -373,18 +373,28 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
 
         response["messages"]["0e2_image"] = url_a
 
+        response["messages"]["1action"] = {"action": "addrole", "member": member_guild, "role": rank_lib.get_rank_id(rank), "user_id": id_u}
+        response["messages"]["2action"] = {"action": "removerole", "member": member_guild,
+                                           "role": rank_lib.get_rank_id(rank-1), "user_id": id_u}
+
         return response
 
     # Test Command to see all parameters.
     if all_m_without_[0] == "test":
         response["message"] = True
         response["multiple"] = True
-        print(f"Debug Log: All Input: {all_m_without_}")
 
-        if len(all_m_without_) > 1:
-            print(f"Debug Log: Input 1 is {all_m_without_[1]}.")
+        try:
+            id_u = int(all_m_without_[1])
+        except ValueError:
+            return raise_error(2, response, all_m_without_[1], m)
 
-        response["messages"]["1text"] = "Input in Console."
+        member_guild = message_object.guild.get_member(id_u)
+
+        response["messages"]["1action"] = {"action": "addrole", "member": member_guild,
+                                           "role": rank_lib.get_rank_id(-1), "user_id": id_u}
+        response["messages"]["2action"] = {"action": "removerole", "member": member_guild,
+                                           "role": rank_lib.get_rank_id(-2), "user_id": id_u}
         return response
 
     # If Command is empty
