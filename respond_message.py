@@ -25,6 +25,65 @@ def read_settings(search):
             return 1
 
 
+def create_userfile(client_r, id_u, path, data, member_guild):
+    # Create user file
+    is_new = True
+    print(f"Debug Log: File for user was not found, creating a new one for {str(client_r.get_user(id_u))}.")
+    with open(path, "w") as f:
+        # Write data if not found.
+        data["exp"] = 0
+
+        # Get rank (no rank = 0)
+        # Rank "The Gravekeeper of the fifth" = 1
+        # Rank "The Quatroguards" = 2
+        # Rank "The third prayer" = 3
+        # Rank "The second circle" = 4
+        # Rank "The choosen ascending" = 5
+        # Rank "One of the first" = 6
+
+        # If we can't find a role, we default to 0
+        role_found = False
+
+        for role in member_guild.roles:
+            # Loop through roles and find the ones.
+            if role.id == 817941435998535689:
+                data["rank"] = 1
+                role_found = True
+                break
+            elif role.id == 817940839404797982:
+                data["rank"] = 2
+                role_found = True
+                break
+            elif role.id == 815231250843435018:
+                data["rank"] = 3
+                role_found = True
+                break
+            elif role.id == 817935867829682236:  # We load 5 earlier, since it could appear earlier than
+                # expected.
+                data["rank"] = 5
+                role_found = True
+                break
+            elif role.id == 815230234411532288:
+                data["rank"] = 4
+                role_found = True
+                break
+            elif role.id == 815015673935691816:
+                data["rank"] = 6
+                role_found = True
+                break
+            elif role.id == 826114593830993933:
+                data["rank"] = 7
+                role_found = True
+            else:
+                continue
+
+        if not role_found:
+            data["rank"] = 0
+
+        json.dump(data, f)
+        return is_new
+
+
 def handle_response(message, client, message_object):
     """Function to handling messages"""
     message_lower = message.lower()
@@ -171,7 +230,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
     if all_m_without_[0] == "getuser":
         response["message"] = True
         response["multiple"] = True
-        if len(all_m_without_) > 2:
+        if not len(all_m_without_) == 2:
             return raise_error(1, response, all_m_without_[2:], m, len(all_m_without_) - 1, 1)
         try:
             id_u = int(all_m_without_[1])
@@ -195,61 +254,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
                 rank = data["rank"]
                 exp = data["exp"]
         except FileNotFoundError:
-            # Create user file
-            is_new = True
-            print(f"Debug Log: File for user was not found, creating a new one for {str(client_r.get_user(id_u))}.")
-            with open(path, "w") as f:
-                # Write data if not found.
-                data["exp"] = 1
-
-                # Get rank (no rank = 0)
-                # Rank "The Gravekeeper of the fifth" = 1
-                # Rank "The Quatroguards" = 2
-                # Rank "The third prayer" = 3
-                # Rank "The second circle" = 4
-                # Rank "The choosen ascending" = 5
-                # Rank "One of the first" = 6
-
-                # If we can't find a role, we default to 0
-                role_found = False
-
-                for role in member_guild.roles:
-                    # Loop through roles and find the ones.
-                    if role.id == 817941435998535689:
-                        data["rank"] = 1
-                        role_found = True
-                        break
-                    elif role.id == 817940839404797982:
-                        data["rank"] = 2
-                        role_found = True
-                        break
-                    elif role.id == 815231250843435018:
-                        data["rank"] = 3
-                        role_found = True
-                        break
-                    elif role.id == 817935867829682236:  # We load 5 earlier, since it could appear earlier than
-                        # expected.
-                        data["rank"] = 5
-                        role_found = True
-                        break
-                    elif role.id == 815230234411532288:
-                        data["rank"] = 4
-                        role_found = True
-                        break
-                    elif role.id == 815015673935691816:
-                        data["rank"] = 6
-                        role_found = True
-                        break
-                    elif role.id == 826114593830993933:
-                        data["rank"] = 7
-                        role_found = True
-                    else:
-                        continue
-
-                if not role_found:
-                    data["rank"] = 0
-
-                json.dump(data, f)
+            is_new = create_userfile(client_r, id_u, path, data, member_guild)
 
         if is_new:
             with open(path, "r") as f:
@@ -289,6 +294,74 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
         # print(f"Debug Log: User Found: {str(client_r.get_user(id_u))}")
         return response
 
+    if all_m_without_[0] == "rankup":
+        # Ranks up user if he has 100 messages.
+        response["message"] = True
+        response["multiple"] = True
+
+        if not len(all_m_without_) == 2:
+            return raise_error(1, response, all_m_without_[2:], m, len(all_m_without_) - 1, 1)
+        try:
+            id_u = int(all_m_without_[1])
+        except ValueError:
+            return raise_error(2, response, all_m_without_[1], m)
+
+        member_guild = message_object.guild.get_member(id_u)
+        embed = discord.Embed(
+            title=f"User {str(client_r.get_user(id_u))} has been Ranked up!",
+            colour=discord.Colour.yellow(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        path = "files/users/" + f"{str(client_r.get_user(id_u))}.json"
+        data = {"username": str(client_r.get_user(id_u)), "exp": 0, "rank": 0}
+        is_new = False
+        try:
+            with open(path, "r") as f:
+                # Load the data of user.
+                data = json.load(f)
+                rank = data["rank"]
+                exp = data["exp"]
+        except FileNotFoundError:
+            is_new = create_userfile(client_r, id_u, path, data, member_guild)
+
+        if is_new:
+            with open(path, "r") as f:
+                # Load the data of user.
+                data = json.load(f)
+                rank = data["rank"]
+                exp = data["exp"]
+
+        if rank == 0:
+            rank += 1
+            exp = 0
+        elif exp >= 100:
+            rank += 1
+            exp = 0
+        else:
+            return raise_error(3, response, all_m_without_[1], m, client_r=client_r, id_u=id_u)
+
+        rank_name = rank_lib.get_rank(rank)
+
+        # Add fields.
+        embed.add_field(name=f"User is now rank: ",
+                        value=f"**{rank_name}**",
+                        inline=True)
+
+        embed.add_field(name=f"**Congrats to your new Rank**",
+                        value=f"**'{str(client_r.get_user(id_u))}'**",
+                        inline=True)
+
+        url_a = member_guild.avatar.url
+
+        embed.set_image(url=url_a)
+
+        response["messages"]["1embed"] = embed
+
+        response["messages"]["0e2_image"] = url_a
+
+        return response
+
     # Test Command to see all parameters.
     if all_m_without_[0] == "test":
         response["message"] = True
@@ -308,7 +381,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
 
 
 # Displays an error if called to the user.
-def raise_error(number, _response, problem, full_command, amount_problem=1, amount_normal=1):
+def raise_error(number, _response, problem, full_command, amount_problem=1, amount_normal=1, client_r=None, id_u=0):
     _response["message"] = True
     _response["multiple"] = True
     if number == 1:
@@ -351,7 +424,21 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         _response["messages"]["1embed"] = embed
 
         return _response
+    elif number == 3:
+        embed = discord.Embed(
+            title="Error:",
+            description=f"The User {str(client_r.get_user(id_u))} cannot rank up.",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot")
 
+        embed.add_field(name=f"The User {str(client_r.get_user(id_u))}: ",
+                        value=f"Does not have 100exp to rank up.",
+                        inline=False)
+
+        _response["messages"]["1embed"] = embed
+
+        return _response
 
 # Debugging
 if __name__ == "__main__":
