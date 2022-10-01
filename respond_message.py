@@ -379,6 +379,86 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
 
         return response
 
+    if all_m_without_[0] == "derank":
+        # Ranks up user if he has 100 messages.
+        response["message"] = True
+        response["multiple"] = True
+
+        if not len(all_m_without_) == 2:
+            return raise_error(1, response, all_m_without_[2:], m, len(all_m_without_) - 1, 1)
+        try:
+            id_u = int(all_m_without_[1])
+        except ValueError:
+            return raise_error(2, response, all_m_without_[1], m)
+
+        member_guild = message_object.guild.get_member(id_u)
+        embed = discord.Embed(
+            title=f"User {str(client_r.get_user(id_u))} has been deranked up.",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        path = "files/users/" + f"{str(client_r.get_user(id_u))}.json"
+        data = {"username": str(client_r.get_user(id_u)), "exp": 0, "rank": 0}
+        is_new = False
+        try:
+            with open(path, "r") as f:
+                # Load the data of user.
+                data = json.load(f)
+                rank = data["rank"]
+                exp = data["exp"]
+        except FileNotFoundError:
+            is_new = create_userfile(client_r, id_u, path, data, member_guild)
+
+        if is_new:
+            with open(path, "r") as f:
+                # Load the data of user.
+                data = json.load(f)
+                rank = data["rank"]
+                exp = data["exp"]
+
+        if rank == 0:
+            return raise_error(5, response, all_m_without_[1], m, client_r=client_r, id_u=id_u)
+        elif exp <= 100:
+            rank -= 1
+            exp = 0
+        else:
+            return raise_error(4, response, all_m_without_[1], m, client_r=client_r, id_u=id_u)
+
+        rank_name = rank_lib.get_rank(rank)
+
+        try:
+            with open(path, "w") as f:
+                # Load the data of user.
+                data["rank"] = rank
+                data["exp"] = exp
+                json.dump(data, f)
+        except FileNotFoundError:
+            print("Error Log: Could not find file even if created.")
+
+        # Add fields.
+        embed.add_field(name=f"User has been derank to: ",
+                        value=f"**{rank_name}**",
+                        inline=True)
+
+        embed.add_field(name=f"**Note: This is currently a test, not deranking.**",
+                        value=f"**'Test'**",
+                        inline=False)
+
+        url_a = member_guild.avatar.url
+
+        embed.set_image(url=url_a)
+
+        response["messages"]["1embed"] = embed
+
+        response["messages"]["0e2_image"] = url_a
+
+        response["messages"]["1action"] = {"action": "removerole", "member": member_guild, "role": rank_lib.get_rank_id(rank), "user_id": id_u}
+        response["messages"]["2action"] = {"action": "addrole", "member": member_guild,
+                                           "role": rank_lib.get_rank_id(rank-1), "user_id": id_u}
+
+        return response
+
     # Test Command to see all parameters.
     if all_m_without_[0] == "test":
         response["message"] = True
@@ -394,6 +474,23 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
         response["messages"]["1action"] = {"action": "addrole", "member": member_guild,
                                            "role": rank_lib.get_rank_id(-1), "user_id": id_u}
         response["messages"]["2action"] = {"action": "removerole", "member": member_guild,
+                                           "role": rank_lib.get_rank_id(-2), "user_id": id_u}
+        return response
+
+    if all_m_without_[0] == "test2":
+        response["message"] = True
+        response["multiple"] = True
+
+        try:
+            id_u = int(all_m_without_[1])
+        except ValueError:
+            return raise_error(2, response, all_m_without_[1], m)
+
+        member_guild = message_object.guild.get_member(id_u)
+
+        response["messages"]["1action"] = {"action": "removerole", "member": member_guild,
+                                           "role": rank_lib.get_rank_id(-1), "user_id": id_u}
+        response["messages"]["2action"] = {"action": "addrole", "member": member_guild,
                                            "role": rank_lib.get_rank_id(-2), "user_id": id_u}
         return response
 
@@ -461,6 +558,36 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
 
         embed.add_field(name=f"The User {str(client_r.get_user(id_u))}: ",
                         value=f"Does not have 100 EXP to rank up.",
+                        inline=False)
+
+        _response["messages"]["1embed"] = embed
+
+        return _response
+    elif number == 4:
+        embed = discord.Embed(
+            title="Error:",
+            description=f"The User {str(client_r.get_user(id_u))} cannot be deranked.",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        embed.add_field(name=f"The User {str(client_r.get_user(id_u))}: ",
+                        value=f"Has more than 100 exp, therefore cannot be deranked.",
+                        inline=False)
+
+        _response["messages"]["1embed"] = embed
+
+        return _response
+    elif number == 5:
+        embed = discord.Embed(
+            title="Error:",
+            description=f"The User {str(client_r.get_user(id_u))} is already the lowest rank.",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        embed.add_field(name=f"The User {str(client_r.get_user(id_u))}: ",
+                        value=f"Has either no rank or is too low of a rank to be deranked.",
                         inline=False)
 
         _response["messages"]["1embed"] = embed
