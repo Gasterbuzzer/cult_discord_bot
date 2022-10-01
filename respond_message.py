@@ -209,13 +209,22 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
         )
 
         embed.add_field(name=f"{prefix}help", value="Show all commands. (This here)", inline=False)
+
         embed.add_field(name=f"{prefix}moon", value="Show the **'current'** Moon State", inline=False)
+
         embed.add_field(name=f"{prefix}fullmoon", value="Show when the fullmoon this month **'was'**.", inline=False)
+
         embed.add_field(name=f"{prefix}nextfullmoon",
                         value="Show when the next fullmoon is **'coming'** in the future.", inline=False)
+
         embed.add_field(name=f"{prefix}getuser", value="Shows the EXP and Rank of a User in the server.", inline=True)
         embed.add_field(name=f"Example", value=f"**'{prefix}getuser @Lucas**'", inline=True)
-        # embed.add_field(name=f"Test Line", value=f"{prefix}Test Text", inline=False)
+
+        embed.add_field(name=f"{prefix}rankup", value="**Admin** Rank up user if he has 100 EXP.", inline=True)
+        embed.add_field(name=f"Example", value=f"**'{prefix}rankup @Lucas**'", inline=True)
+
+        embed.add_field(name=f"{prefix}derank", value="**Admin** Derank user if he has less than 100 EXP.", inline=True)
+        embed.add_field(name=f"Example", value=f"**'{prefix}derank @Lucas**'", inline=True)
 
         embed.set_thumbnail(
             url="attachment://image.png")  # Use the attachment url inorder to use local files and/or images
