@@ -220,8 +220,12 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
         embed.add_field(name=f"{prefix}getuser", value="Shows the EXP and Rank of a User in the server.", inline=True)
         embed.add_field(name=f"Example", value=f"**'{prefix}getuser @Lucas**'", inline=True)
 
+        embed.add_field(name=chr(173), value=chr(173))
+
         embed.add_field(name=f"{prefix}rankup", value="**Admin** Rank up user if he has 100 EXP.", inline=True)
         embed.add_field(name=f"Example", value=f"**'{prefix}rankup @Lucas**'", inline=True)
+
+        embed.add_field(name=chr(173), value=chr(173))
 
         embed.add_field(name=f"{prefix}derank", value="**Admin** Derank user if he has less than 100 EXP.", inline=True)
         embed.add_field(name=f"Example", value=f"**'{prefix}derank @Lucas**'", inline=True)
