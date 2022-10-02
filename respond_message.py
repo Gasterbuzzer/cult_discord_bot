@@ -633,7 +633,7 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         )
         embed.set_footer(text="Sekte Bot")
 
-        embed.add_field(name=f"This command requires higher permission.: ",
+        embed.add_field(name=f"This command requires higher permission: ",
                         value=f"If this is wrong, contact your administrator.",
                         inline=False)
 
