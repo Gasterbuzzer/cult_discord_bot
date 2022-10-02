@@ -84,7 +84,7 @@ def create_userfile(client_r, id_u, path, data, member_guild):
         return is_new
 
 
-def handle_response(message, client, message_object):
+def handle_response(message, client, message_object, author):
     """Function to handling messages"""
     message_lower = message.lower()
 
@@ -93,13 +93,13 @@ def handle_response(message, client, message_object):
 
     if message_lower[:1] == read_settings("prefix"):
         # Every Response should be a dictionary containing a True or False, if there are multiple messages.
-        return handle_message(message_lower[1:], messages_all, messages_all_without_, client, message_object)
+        return handle_message(message_lower[1:], messages_all, messages_all_without_, client, message_object, author)
     else:
         # If Message was not with a prefix, return no message
         return {"message": False}
 
 
-def handle_message(m, all_m, all_m_without_, client_r, message_object):
+def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
     """ Method checking what the command was and sending appropriate Message """
     # Default Response layout, message is if there is a message, multiple is if there are multiple responses,
     # messages contains all messages
@@ -227,7 +227,8 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
 
         embed.add_field(name=chr(173), value=chr(173))
 
-        embed.add_field(name=f"{prefix}derank", value="**Admin**: Derank user if he has less than 100 EXP.", inline=True)
+        embed.add_field(name=f"{prefix}derank", value="**Admin**: Derank user if he has less than 100 EXP.",
+                        inline=True)
         embed.add_field(name=f"Example", value=f"**'{prefix}derank @Lucas**'", inline=True)
 
         embed.set_thumbnail(
@@ -319,6 +320,9 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
         except ValueError:
             return raise_error(2, response, all_m_without_[1], m)
 
+        if not author.get_role() == rank_lib.get_rank_id(8):
+            return raise_error(6, response, all_m_without_[1], m, client_r=client_r, id_u=id_u)
+
         member_guild = message_object.guild.get_member(id_u)
         embed = discord.Embed(
             title=f"User {str(client_r.get_user(id_u))} has been Ranked up!",
@@ -386,9 +390,10 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
 
         response["messages"]["0e2_image"] = url_a
 
-        response["messages"]["1action"] = {"action": "addrole", "member": member_guild, "role": rank_lib.get_rank_id(rank), "user_id": id_u}
+        response["messages"]["1action"] = {"action": "addrole", "member": member_guild,
+                                           "role": rank_lib.get_rank_id(rank), "user_id": id_u}
         response["messages"]["2action"] = {"action": "removerole", "member": member_guild,
-                                           "role": rank_lib.get_rank_id(rank-1), "user_id": id_u}
+                                           "role": rank_lib.get_rank_id(rank - 1), "user_id": id_u}
 
         return response
 
@@ -403,6 +408,9 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
             id_u = int(all_m_without_[1])
         except ValueError:
             return raise_error(2, response, all_m_without_[1], m)
+
+        if not author.get_role() == rank_lib.get_rank_id(8):
+            return raise_error(6, response, all_m_without_[1], m, client_r=client_r, id_u=id_u)
 
         member_guild = message_object.guild.get_member(id_u)
         embed = discord.Embed(
@@ -466,9 +474,10 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object):
 
         response["messages"]["0e2_image"] = url_a
 
-        response["messages"]["1action"] = {"action": "removerole", "member": member_guild, "role": rank_lib.get_rank_id(rank), "user_id": id_u}
+        response["messages"]["1action"] = {"action": "removerole", "member": member_guild,
+                                           "role": rank_lib.get_rank_id(rank), "user_id": id_u}
         response["messages"]["2action"] = {"action": "addrole", "member": member_guild,
-                                           "role": rank_lib.get_rank_id(rank-1), "user_id": id_u}
+                                           "role": rank_lib.get_rank_id(rank - 1), "user_id": id_u}
 
         return response
 
@@ -606,6 +615,22 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         _response["messages"]["1embed"] = embed
 
         return _response
+    elif number == 6:
+        embed = discord.Embed(
+            title="Error:",
+            description=f"You do not have the permission to use this command.",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        embed.add_field(name=f"This command requires higher permission.: ",
+                        value=f"If this is wrong, contact your administrator.",
+                        inline=False)
+
+        _response["messages"]["1embed"] = embed
+
+        return _response
+
 
 # Debugging
 if __name__ == "__main__":

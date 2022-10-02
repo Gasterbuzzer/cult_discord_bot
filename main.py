@@ -231,7 +231,7 @@ def run_bot():
         print(f"Chat Message Log: '{username}' has send the message '{user_message}' in '{channel}'.")
 
         # Note that message is the give parameter from the event async, user_message is just a string from it.
-        await send_message(message, user_message, client)
+        await send_message(message, user_message, client, message.author)
         await gain_exp_user(message.author)
 
     # Read Bot Token from File.
