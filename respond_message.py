@@ -320,7 +320,12 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         except ValueError:
             return raise_error(2, response, all_m_without_[1], m)
 
-        if not author.get_role() == rank_lib.get_rank_id(8):
+        permission_role = False
+        for role in author.roles:
+            if role.id == rank_lib.get_rank_id(8):
+                permission_role = True
+
+        if not permission_role:
             return raise_error(6, response, all_m_without_[1], m, client_r=client_r, id_u=id_u)
 
         member_guild = message_object.guild.get_member(id_u)
@@ -409,7 +414,12 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         except ValueError:
             return raise_error(2, response, all_m_without_[1], m)
 
-        if not author.get_role() == rank_lib.get_rank_id(8):
+        permission_role = False
+        for role in author.roles:
+            if role.id == rank_lib.get_rank_id(8):
+                permission_role = True
+
+        if not permission_role:
             return raise_error(6, response, all_m_without_[1], m, client_r=client_r, id_u=id_u)
 
         member_guild = message_object.guild.get_member(id_u)

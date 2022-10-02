@@ -20,11 +20,11 @@ path_user = "files/users/"
 # Defining functions to use, much easier if done so.
 
 # This is complicated, so many comments
-async def send_message(message, user_message, client):
+async def send_message(message, user_message, client, author):
     """Sends message to channel"""
     try:
         # From respond_message we get what to answer. This gets stored.
-        response = respond_message.handle_response(user_message, client, message)
+        response = respond_message.handle_response(user_message, client, message, author)
 
         # await message.author.send(response) For private message
 
