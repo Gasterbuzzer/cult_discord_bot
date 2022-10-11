@@ -87,9 +87,9 @@ def need_remind():
     days = days_to_fullmoon()
 
     with open("files/reminder.json", "r") as f:
-        days = json.load(f)
+        days_i = json.load(f)
 
-    if days["days"] < 14 and not days["reminded"]:
+    if days < 14 and not days_i["reminded"]:
         return True
     else:
         return False
