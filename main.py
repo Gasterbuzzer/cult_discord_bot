@@ -100,6 +100,12 @@ async def send_message(message, user_message, client, author):
                             await guild_member.remove_roles(rank_role, reason="User ranked up.")
                             print(f"Debug Log: Removed Role: {rank} for {username}")
 
+                        elif response['messages'][i]['action'] == "sendprivatemessage":
+                            # Send private message to user.
+                            user = client.get_user(response["messages"][i]["user_id"])
+                            await user.send('Test Worked.')
+                            print(f"Debug Log: Send private message to user.")
+
                         continue
 
             else:

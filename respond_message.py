@@ -10,6 +10,7 @@ import discord
 # Import custom (mine) libraries
 import moon_api
 import rank_lib
+import reminder_api
 
 
 def read_settings(search):
@@ -489,6 +490,13 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         response["messages"]["2action"] = {"action": "addrole", "member": member_guild,
                                            "role": rank_lib.get_rank_id(rank - 1), "user_id": id_u}
 
+        return response
+
+    if all_m_without_[0] == "remind":
+        response["message"] = True
+        response["multiple"] = True
+
+        response["messages"]["1action"] = {"action": "sendprivatemessage", "user_id": 214730164813299712}
         return response
 
     # Test Command to see all parameters.
