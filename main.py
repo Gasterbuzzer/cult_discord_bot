@@ -249,7 +249,7 @@ def run_bot():
             print("Debug Log: Token grabbed.")
     except FileNotFoundError:
         print("\n\nCritical Error: File discordt.txt was not found in files folder.\n"
-              "This file contains one line with the bot token.\n\n")
+              "This file should contain one line with the bot token.\n\n")
         input()
         raise SystemExit()
 
