@@ -10,7 +10,6 @@ import discord
 # Import custom (mine) libraries
 import moon_api
 import rank_lib
-import reminder_api
 
 
 def read_settings(search):
