@@ -6,7 +6,9 @@ import json
 
 # Import Custom libraries
 import discord
+from discord.ext import tasks
 
+import reminder_api
 # Import my librariers
 import respond_message
 
@@ -103,7 +105,8 @@ async def send_message(message, user_message, client, author):
                         elif response['messages'][i]['action'] == "sendprivatemessage":
                             # Send private message to user.
                             user = client.get_user(response["messages"][i]["user_id"])
-                            await user.send('Test Worked.')
+                            text = response["messages"][i]["message"]
+                            await user.send(text)
                             print(f"Debug Log: Send private message to user.")
 
                         continue
@@ -216,11 +219,53 @@ def run_bot():
     intents.message_content = True
     client = discord.Client(intents=intents, activity=discord.Game(name=start_activity))
 
+    @tasks.loop(hours=24.0)
+    async def send_message_to_me():
+        reminder_api.update_days()
+
+        user = client.get_user(659890824783462411)
+        channel = client.get_channel(815248996062462042)
+
+        file = discord.File("files/images/moon_re.png", filename="image.png")
+
+        embed = discord.Embed(
+            title="Fullmoon Reminder:",
+            description="Your friendly fullmoon reminder.",
+            colour=discord.Colour.yellow(),
+        )
+
+        embed.add_field(name=f"**Fullmoon is in: {reminder_api.days_to_fullmoon() - 1}**", value="This reminder "
+                                                                                                 "will not appear "
+                                                                                                 "again.",
+                        inline=False)
+
+        embed.set_thumbnail(
+            url="attachment://image.png")  # Use the attachment url inorder to use local files and/or images
+
+        embed.set_footer(text="Sekte Bot Remind")
+
+        if reminder_api.need_remind():
+            print(f"Debug Log: 24 Hours Loop Finished: ")
+            print(f"\tDebug Log: Reminding User that fullmoon is near.")
+
+            await user.send(embed=embed, file=file)
+            await channel.send(embed=embed, file=file)
+            reminder_api.was_reminded(True)
+        else:
+            print(f"Debug Log: 24 Hours Loop Finished: ")
+            if reminder_api.need_remind() and reminder_api.is_reminded():
+                print(f"\tDebug Log: Not Reminding, since there is still {reminder_api.days_to_fullmoon()} days.")
+            elif reminder_api.is_reminded() and not reminder_api.need_remind():
+                print(f"\tDebug Log: Not Reminding, since there is still {reminder_api.days_to_fullmoon()} days. "
+                      f"\n\tUpdating file to represent this...")
+                reminder_api.was_reminded(False)
+
     @client.event
     async def on_ready():
         """When bot is ready"""
         print(f"Debug Log: Bot logged in as '{client.user}'.")
         print(f"Debug Log: Bot set status to '{start_activity}'.")
+        send_message_to_me.start()
 
     @client.event
     async def on_message(message):

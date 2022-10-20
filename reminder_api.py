@@ -37,7 +37,7 @@ def days_to_fullmoon():
     return int(days)
 
 
-def _update_days():
+def update_days():
     """Updates reminder file to represent days."""
     try:
         with open("files/reminder.json", "r") as f:
@@ -72,6 +72,7 @@ def is_reminded():
             return False
 
 
+# Is called to update the reminded tag. (Parameter to set either to True or False)
 def was_reminded(reminded):
     """Writes reminded into file if user was reminded."""
     with open("files/reminder.json", "r") as f:
@@ -82,6 +83,7 @@ def was_reminded(reminded):
         json.dump(info, f)
 
 
+# Requires that reminder.json is up-to-date!
 def need_remind():
     """Checks if reminder is necessary."""
     days = days_to_fullmoon()
@@ -98,4 +100,5 @@ def need_remind():
 # Test for functions
 if __name__ == "__main__":
     # print(_get_current_dmy())
+    print(update_days())
     print(need_remind())

@@ -492,13 +492,6 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
 
         return response
 
-    if all_m_without_[0] == "remind":
-        response["message"] = True
-        response["multiple"] = True
-
-        response["messages"]["1action"] = {"action": "sendprivatemessage", "user_id": 214730164813299712}
-        return response
-
     # Test Command to see all parameters.
     if all_m_without_[0] == "test":
         response["message"] = True
