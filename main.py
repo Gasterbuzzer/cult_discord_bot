@@ -234,7 +234,7 @@ def run_bot():
             colour=discord.Colour.yellow(),
         )
 
-        embed.add_field(name=f"**Fullmoon is in: {reminder_api.days_to_fullmoon() - 1}**", value="This reminder "
+        embed.add_field(name=f"**Fullmoon is in: {reminder_api.days_to_fullmoon() - 1} days.**", value="This reminder "
                                                                                                  "will not appear "
                                                                                                  "again.",
                         inline=False)
