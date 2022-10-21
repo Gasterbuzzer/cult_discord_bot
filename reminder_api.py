@@ -100,5 +100,6 @@ def need_remind():
 # Test for functions
 if __name__ == "__main__":
     # print(_get_current_dmy())
-    print(update_days())
+    # print(update_days())
     print(need_remind())
+    print(is_reminded())
