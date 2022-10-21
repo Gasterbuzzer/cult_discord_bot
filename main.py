@@ -223,7 +223,7 @@ def run_bot():
     async def send_message_to_me():
 
         print(f"Debug Log: 24 Hours Loop Finished: ")
-        reminder_api.update_days()
+        await reminder_api.update_days()
 
         user = client.get_user(659890824783462411)
         channel = client.get_channel(815248996062462042)

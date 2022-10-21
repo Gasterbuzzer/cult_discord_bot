@@ -2,6 +2,7 @@ import calendar
 from datetime import datetime
 import moon_api
 import json
+import asyncio
 
 
 def _get_current_dmy():
@@ -37,17 +38,19 @@ def days_to_fullmoon():
     return int(days)
 
 
-def update_days():
+async def update_days():
     """Updates reminder file to represent days."""
+    days_to_fullmoon_int = days_to_fullmoon()
+    days_to_fullmoon_int = int(days_to_fullmoon_int)
     try:
         with open("files/reminder.json", "r") as f:
             days_file = json.load(f)
             reminded = days_file["reminded"]
-        if days_file["days"] > days_to_fullmoon():
+        if days_file["days"] > days_to_fullmoon_int:
             with open("files/reminder.json", "w") as f:
-                info = {"days": int(days_to_fullmoon()), "reminded": reminded}
+                info = {"days": days_to_fullmoon_int, "reminded": reminded}
                 json.dump(info, f)
-                return int(days_to_fullmoon())
+                return days_to_fullmoon_int
         else:
             with open("files/reminder.json", "w") as f:
                 info = {"days": days_file["days"], "reminded": reminded}
@@ -56,10 +59,10 @@ def update_days():
     except FileNotFoundError:
         print("Debug Log: Reminder File not found, creating one...")
         with open("files/reminder.json", "w") as f:
-            info = {"days": int(days_to_fullmoon()), "reminded": False}
+            info = {"days": days_to_fullmoon_int, "reminded": False}
             json.dump(info, f)
-            print(f"\tInfo: Created file with reminded = False and days = {days_to_fullmoon()}")
-            return int(days_to_fullmoon())
+            print(f"\tInfo: Created file with reminded = False and days = {days_to_fullmoon_int}")
+            return days_to_fullmoon_int
 
 
 def is_reminded():
@@ -102,5 +105,6 @@ def need_remind():
 if __name__ == "__main__":
     # print(_get_current_dmy())
     # print(update_days())
-    print(need_remind())
-    print(is_reminded())
+    # print(need_remind())
+    # print(is_reminded())
+    print(asyncio.run(update_days()))
