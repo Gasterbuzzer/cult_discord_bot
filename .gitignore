@@ -165,6 +165,7 @@ files/images/moon_phase.jpg
 # Ignore user data
 files/users/
 files/reminder.json
+files/reminders.json
 
 # Ignore .idea
 .idea/
