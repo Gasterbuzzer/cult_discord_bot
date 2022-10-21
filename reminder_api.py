@@ -58,6 +58,7 @@ def update_days():
         with open("files/reminder.json", "w") as f:
             info = {"days": int(days_to_fullmoon()), "reminded": False}
             json.dump(info, f)
+            print(f"\tInfo: Created file with reminded = False and days = {days_to_fullmoon()}")
             return int(days_to_fullmoon())
 
 

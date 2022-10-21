@@ -257,6 +257,9 @@ def run_bot():
                 print(f"\tDebug Log: Not Reminding, since there is still {reminder_api.days_to_fullmoon()} days. "
                       f"\n\tUpdating file to represent this...")
                 reminder_api.was_reminded(False)
+                print("\tInfo: Set Reminded = False in file.")
+
+        print("Debug Log: Resuming normal operations...")
 
     @client.event
     async def on_ready():
