@@ -9,7 +9,7 @@ import discord
 from discord.ext import tasks
 
 import reminder_api
-# Import my librariers
+# Import my libraries
 import respond_message
 
 # Just some variables definitions
