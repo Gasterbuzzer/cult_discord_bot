@@ -136,6 +136,7 @@ def get_dev():
         with open("dev.json", "w") as f:
             info = {"dev": False}
             json.dump(info, f)
+            print("Debug Log: Dev file not found, creating one...")
             return False
 
 
