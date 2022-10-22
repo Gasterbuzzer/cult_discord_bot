@@ -281,7 +281,7 @@ def run_bot():
         if not get_dev():
             send_message_to_me.start()
         else:
-            print(f"\n\n DEV Log: Developer environment found, some functionality is disabled.")
+            print(f"\n\n DEV Log: Developer environment found, some functionality is disabled. \n\n")
 
     @client.event
     async def on_message(message):
