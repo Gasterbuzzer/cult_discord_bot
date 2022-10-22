@@ -127,6 +127,17 @@ async def send_message(message, user_message, client, author):
 # except ValueError:
 # print("What")
 
+def get_dev():
+    try:
+        with open("dev.json", "r") as f:
+            info = json.load(f)
+            return info["dev"]
+    except FileNotFoundError:
+        with open("dev.json", "w") as f:
+            info = {"dev": False}
+            json.dump(info, f)
+            return False
+
 
 async def gain_exp_user(author):
     """Function that gives a user xp."""
@@ -266,7 +277,10 @@ def run_bot():
         """When bot is ready"""
         print(f"Debug Log: Bot logged in as '{client.user}'.")
         print(f"Debug Log: Bot set status to '{start_activity}'.")
-        send_message_to_me.start()
+        if not get_dev():
+            send_message_to_me.start()
+        else:
+            print(f"\n\n DEV Log: Developer environment found, some functionality is disabled.")
 
     @client.event
     async def on_message(message):
