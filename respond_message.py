@@ -700,7 +700,6 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         return _response
 
 
-
 # Debugging
 if __name__ == "__main__":
     # Is used to test different responses.

@@ -64,7 +64,7 @@ def get_fullmoon(month=None):
     r = requests.get(url)
     page_text = r.text
 
-    if month == None:
+    if month is None:
         # Get Months and so on as texts
         month_text = datetime.today().strftime("%B")
         # month_text_short = datetime.today().strftime("%b")

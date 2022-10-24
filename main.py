@@ -177,8 +177,8 @@ async def gain_exp_user(author):
 
             data_to_save["exp"] = exp
             # Save the file.
-            with open(path, "w") as f:
-                json.dump(data_to_save, f)
+            with open(path, "w") as f_:
+                json.dump(data_to_save, f_)
 
     except FileNotFoundError:
         print(f"Debug Log: File for user was not found, creating a new one for {username}.")
