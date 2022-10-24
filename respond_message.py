@@ -132,7 +132,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         return response
 
     # Fullmoon Command, gets the date for the full moon.
-    if m == "fullmoon":
+    elif m == "fullmoon":
         response["message"] = True
         response["multiple"] = True
 
@@ -156,7 +156,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         return response
 
     # Nextfullmoon Command, gets the next coming fullmoon.
-    if m == "nextfullmoon":
+    elif m == "nextfullmoon":
         response["message"] = True
         response["multiple"] = True
         fullmoon_day = moon_api.get_fullmoon()
@@ -195,7 +195,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         return response
 
     # Help Command to show all commands.
-    if m == "help":
+    elif m == "help":
         response["message"] = True
         response["multiple"] = True
 
@@ -241,7 +241,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         return response
 
     # Command to get data of a specified user.
-    if all_m_without_[0] == "getuser":
+    elif all_m_without_[0] == "getuser":
         response["message"] = True
         response["multiple"] = True
         if not len(all_m_without_) == 2:
@@ -308,7 +308,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         # print(f"Debug Log: User Found: {str(client_r.get_user(id_u))}")
         return response
 
-    if all_m_without_[0] == "rankup":
+    elif all_m_without_[0] == "rankup":
         # Ranks up user if he has 100 messages.
         response["message"] = True
         response["multiple"] = True
@@ -402,7 +402,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
 
         return response
 
-    if all_m_without_[0] == "derank":
+    elif all_m_without_[0] == "derank":
         # Ranks up user if he has 100 messages.
         response["message"] = True
         response["multiple"] = True
@@ -492,13 +492,13 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         return response
 
     # Test Command to see all parameters.
-    if all_m_without_[0] == "ritual":
+    elif all_m_without_[0] == "ritual":
         response["message"] = True
         response["multiple"] = True
 
         # The command must be run while the user is in a voice channel.
         if not author.voice.channel:
-            return raise_error(7, response, m, all_m_without_[0])
+            return raise_error(7, response, all_m_without_[0], m)
 
         # We check if the Bot is already connected to the channel of the user, if yes, we disconnect.
         for voice in client_r.voice_clients:
@@ -532,7 +532,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
 
         return response
 
-    if all_m_without_[0] == "test2":
+    elif all_m_without_[0] == "test2":
         response["message"] = True
         response["multiple"] = True
 
@@ -550,7 +550,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         return response
 
     # If Command is empty
-    if m == "":
+    elif m == "":
         response_fallback = {"message": False}
         return response_fallback
 
