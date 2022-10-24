@@ -517,7 +517,8 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         response["multiple"] = True
 
         # The command must be run while the user is in a voice channel.
-        if not author.voice.channel:
+
+        if not author.voice:
             return raise_error(7, response, all_m_without_[0], m)
 
         # We check if the Bot is already connected to the channel of the user, if yes, we disconnect.
