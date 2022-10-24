@@ -492,21 +492,16 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         return response
 
     # Test Command to see all parameters.
-    if all_m_without_[0] == "test":
+    if all_m_without_[0] == "ritual":
         response["message"] = True
         response["multiple"] = True
 
-        try:
-            id_u = int(all_m_without_[1])
-        except ValueError:
-            return raise_error(2, response, all_m_without_[1], m)
-
         member_guild = message_object.guild.get_member(id_u)
 
-        response["messages"]["1action"] = {"action": "addrole", "member": member_guild,
+
+        response["messages"]["1action"] = {"action": "connect", "member": member_guild,
                                            "role": rank_lib.get_rank_id(-1), "user_id": id_u}
-        response["messages"]["2action"] = {"action": "removerole", "member": member_guild,
-                                           "role": rank_lib.get_rank_id(-2), "user_id": id_u}
+
         return response
 
     if all_m_without_[0] == "test2":
