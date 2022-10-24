@@ -317,14 +317,20 @@ def run_bot():
         await gain_exp_user(message.author)
 
     # Read Bot Token from File.
+    if get_dev():
+        path = "files/discordt_dev.txt"
+        filename = "discordt_dev.txt"
+    else:
+        path = "files/discordt.txt"
+        filename = "discordt.txt"
     token = None
     try:
         print("Debug Log: Reading token from discordt.txt ...")
-        with open("files/discordt.txt") as f:
+        with open(path) as f:
             token = f.read()
             print("Debug Log: Token grabbed.")
     except FileNotFoundError:
-        print("\n\nCritical Error: File discordt.txt was not found in files folder.\n"
+        print(f"\n\nCritical Error: File {filename} was not found in files folder.\n"
               "This file should contain one line with the bot token.\n\n")
         input()
         raise SystemExit()
