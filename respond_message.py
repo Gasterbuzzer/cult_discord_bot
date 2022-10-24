@@ -10,19 +10,34 @@ import discord
 # Import custom (mine) libraries
 import moon_api
 import rank_lib
+import main
 
 
 def read_settings(search):
     """Read Settings Values with given parameter"""
-    with open("files/settings.json", "r") as f:
-        contents = json.load(f)
-        try:
-            result = contents[search]
-            return result
-        except KeyError:  # If Key does not exist or is not found, default to 1
-            print("Error: Key not found or not existent, defaulting to '1' ...")
-            print("Recommended Fix: Write Settings File correctly.")
-            return 1
+
+    is_dev = main.get_dev()
+
+    if not is_dev:
+        path_settings = "files/settings.json"
+    else:
+        path_settings = "files/settings_dev.json"
+
+    try:
+        with open(path_settings, "r") as f:
+            contents = json.load(f)
+            try:
+                result = contents[search]
+                return result
+            except KeyError:  # If Key does not exist or is not found, default to 1
+                print("Error: Key not found or not existent, defaulting to '1' ...")
+                print("Recommended Fix: Write Settings File correctly.")
+                return 1
+    except FileNotFoundError:
+        with open(path_settings, "w") as f:
+            contents_ = {"prefix": "$"}
+            json.dump(contents_, f)
+            print(f"Dev Log: {path_settings} not found, creating one...")
 
 
 def create_userfile(client_r, id_u, path, data, member_guild):
@@ -230,6 +245,11 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         embed.add_field(name=f"{prefix}derank", value="**Admin**: Derank user if he has less than 100 EXP.",
                         inline=True)
         embed.add_field(name=f"Example", value=f"**'{prefix}derank @Lucas**'", inline=True)
+
+        embed.add_field(name=chr(173), value=chr(173))
+
+        embed.add_field(name=f"{prefix}ritual", value="Start a ritual in your current voice channel!",
+                        inline=False)
 
         embed.set_thumbnail(
             url="attachment://image.png")  # Use the attachment url inorder to use local files and/or images
