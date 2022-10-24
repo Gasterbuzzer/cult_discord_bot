@@ -109,6 +109,21 @@ async def send_message(message, user_message, client, author):
                             await user.send(text)
                             print(f"Debug Log: Send private message to user.")
 
+                        elif response['messages'][i]['action'] == "connect":
+                            # Join a given channel. (Template: {"action": "connect", "VoiceChannel":
+                            # author.voice.channel})
+
+                            voice_channel = response["messages"][i]["VoiceChannel"]
+                            await voice_channel.connect()
+                            print(f"Debug Log: Connected to voice channel **{voice_channel.name}**")
+
+                        elif response['messages'][i]['action'] == "disconnect":
+                            # Disconnect from an active channel. (Template: {"action": "disconnect", "VoiceClient":
+                            # voice})
+                            voice_client = response["messages"][i]["VoiceClient"]
+                            await voice_client.disconnect()
+                            print(f"Debug Log: Disconnected from Voice Channel: **{voice_client.channel.name}**")
+
                         continue
 
             else:

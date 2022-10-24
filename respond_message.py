@@ -496,11 +496,39 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         response["message"] = True
         response["multiple"] = True
 
-        member_guild = message_object.guild.get_member(id_u)
+        # The command must be run while the user is in a voice channel.
+        if not author.voice.channel:
+            return raise_error(7, response, m, all_m_without_[0])
 
+        # We check if the Bot is already connected to the channel of the user, if yes, we disconnect.
+        for voice in client_r.voice_clients:
+            if voice.channel.id == author.voice.channel.id:
+                response["messages"]["1action"] = {"action": "disconnect", "VoiceClient": voice}
 
-        response["messages"]["1action"] = {"action": "connect", "member": member_guild,
-                                           "role": rank_lib.get_rank_id(-1), "user_id": id_u}
+                embed = discord.Embed(
+                    title=f"Disconnected from the Voice Channel.",
+                    description="Bot has disconnected from the current Voice Channel.",
+                    colour=discord.Colour.yellow(),
+                )
+                embed.set_footer(text="Sekte Bot")
+
+                response["messages"]["1embed"] = embed
+
+                return response
+
+        # If the Bot was not in any of the channels that the user called, then join the user and display a message.
+        response["messages"]["1action"] = {"action": "connect", "VoiceChannel": author.voice.channel}
+
+        embed = discord.Embed(
+            title=f"Connected to the voice channel **{author.voice.channel.name}**.",
+            description="Bot joined the voice channel and is now starting the ritual.",
+            colour=discord.Colour.yellow(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        response["messages"]["1embed"] = embed
+
+        response["messages"]["1embed"] = embed
 
         return response
 
@@ -635,6 +663,22 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         _response["messages"]["1embed"] = embed
 
         return _response
+    elif number == 7:
+        embed = discord.Embed(
+            title="Error:",
+            description=f"You are not in a voice channel.",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        embed.add_field(name=f"Not in a voice channel: ",
+                        value=f"You must be in a voice channel in order to call this command.",
+                        inline=False)
+
+        _response["messages"]["1embed"] = embed
+
+        return _response
+
 
 
 # Debugging
