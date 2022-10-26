@@ -95,7 +95,7 @@ def need_remind():
     with open("files/reminder.json", "r") as f:
         days_i = json.load(f)
 
-    if days < 14 and not days_i["reminded"]:
+    if days <= 14 and not days_i["reminded"]:
         return True
     else:
         return False
