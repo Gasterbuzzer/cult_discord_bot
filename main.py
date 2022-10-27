@@ -258,7 +258,7 @@ def run_bot():
         file = discord.File("files/images/moon_re.png", filename="image.png")
         embed = discord.Embed(
             title="Fullmoon Reminder:",
-            description="Your friendly fullmoon reminder.",
+            description="@everyone Your friendly fullmoon reminder.",
             colour=discord.Colour.yellow(),
         )
         embed.add_field(name=f"**Fullmoon is in: {reminder_api.days_to_fullmoon() - 1} days.**", value="This reminder "
