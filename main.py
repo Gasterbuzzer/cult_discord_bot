@@ -275,6 +275,12 @@ def run_bot():
             print(f"\tDebug Log: Reminding User that fullmoon is near.")
 
             await channel.send(embed=embed, file=file)
+
+            # This step is repeated incase the first one gets closed by python bruh
+            file = discord.File("files/images/moon_re.png", filename="image.png")
+            embed.set_thumbnail(
+                url="attachment://image.png")  # Use the attachment url inorder to use local files and/or images
+
             await user.send(embed=embed, file=file)
 
             reminder_api.was_reminded(True)
