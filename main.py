@@ -274,8 +274,9 @@ def run_bot():
 
             print(f"\tDebug Log: Reminding User that fullmoon is near.")
 
-            await user.send(embed=embed, file=file)
             await channel.send(embed=embed, file=file)
+            await user.send(embed=embed, file=file)
+
             reminder_api.was_reminded(True)
         else:
             if reminder_api.need_remind() and reminder_api.is_reminded():
