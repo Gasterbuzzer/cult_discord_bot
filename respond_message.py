@@ -511,7 +511,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
 
         return response
 
-    # Test Command to see all parameters.
+    # Plays music when called or disconnects bot if already playing.
     elif all_m_without_[0] == "ritual":
         response["message"] = True
         response["multiple"] = True
@@ -539,6 +539,9 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
 
         # If the Bot was not in any of the channels that the user called, then join the user and display a message.
         response["messages"]["1action"] = {"action": "connect", "VoiceChannel": author.voice.channel}
+
+        # Plays the music
+        response["messages"]["2action"] = {"action": "play", "VoiceChannel": author.voice.channel, "music_path": "files/audio/music.mp3"}
 
         embed = discord.Embed(
             title=f"Connected to the voice channel **{author.voice.channel.name}**.",

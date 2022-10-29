@@ -115,15 +115,33 @@ async def send_message(message, user_message, client, author):
 
                             voice_channel = response["messages"][i]["VoiceChannel"]
                             vc = await voice_channel.connect()
-                            vc.play(discord.FFmpegPCMAudio(source="files/audio/music.mp3"))
+
                             print(f"Debug Log: Connected to voice channel **{voice_channel.name}**")
 
                         elif response['messages'][i]['action'] == "disconnect":
                             # Disconnect from an active channel. (Template: {"action": "disconnect", "VoiceClient":
                             # voice})
                             voice_client = response["messages"][i]["VoiceClient"]
+                            print("\n\tDebug Log: Stopping music...")
+                            voice_client.stop()
+                            print("\n\tDebug Log: Disconnecting from voice channel...\n")
                             await voice_client.disconnect()
                             print(f"Debug Log: Disconnected from Voice Channel: **{voice_client.channel.name}**")
+
+                        elif response['messages'][i]['action'] == "play":
+                            # Plays a song based on the location and given player.
+                            # Default music source="files/audio/music.mp3"
+
+                            voice_channel = response["messages"][i]["VoiceChannel"]
+
+                            for voice in client.voice_clients:
+                                if voice.channel.id == voice_channel.id:
+                                    _voice_client = voice
+                                    _voice_client.play(
+                                        discord.FFmpegPCMAudio(source=response["messages"][i]["music_path"]))
+                                    break
+                                else:
+                                    print("Error Log: Bot is not in the voice channel and this cannot play the song.")
 
                         continue
 
@@ -310,13 +328,6 @@ def run_bot():
         else:
             print(f"\n\n DEV Log: Developer environment found, some functionality is disabled. \n\n")
 
-        #if discord.opus.is_loaded():
-            #print(f"Opus library is loaded and ready to be used.")
-        #else:
-            #print(f"\n\nCritical Error: Opus Library was not loaded.\n\n")
-            #input()
-            #raise SystemExit()
-
     @client.event
     async def on_message(message):
         """If message happens."""
@@ -353,9 +364,6 @@ def run_bot():
               "This file should contain one line with the bot token.\n\n")
         input()
         raise SystemExit()
-
-
-
 
     # Start Bot
     print("Debug Log: Bot is starting to run...")
