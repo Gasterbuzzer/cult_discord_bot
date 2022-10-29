@@ -107,4 +107,4 @@ if __name__ == "__main__":
     # print(update_days())
     # print(need_remind())
     # print(is_reminded())
-    print(asyncio.run(update_days()))
+    print(is_reminded())

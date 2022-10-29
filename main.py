@@ -294,6 +294,8 @@ def run_bot():
                       f"\n\tUpdating file to represent this...")
                 reminder_api.was_reminded(False)
                 print("\tInfo: Set Reminded = False in file.")
+            elif not reminder_api.need_remind() and reminder_api.is_reminded():
+                print(f"\tDebug Log: Not Reminding, since there is still {reminder_api.days_to_fullmoon()} days.")
 
         print("Debug Log: Resuming normal operations...")
 
