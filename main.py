@@ -114,7 +114,8 @@ async def send_message(message, user_message, client, author):
                             # author.voice.channel})
 
                             voice_channel = response["messages"][i]["VoiceChannel"]
-                            await voice_channel.connect()
+                            vc = await voice_channel.connect()
+                            vc.play(discord.FFmpegPCMAudio(source="files/audio/music.mp3"))
                             print(f"Debug Log: Connected to voice channel **{voice_channel.name}**")
 
                         elif response['messages'][i]['action'] == "disconnect":
@@ -309,6 +310,13 @@ def run_bot():
         else:
             print(f"\n\n DEV Log: Developer environment found, some functionality is disabled. \n\n")
 
+        #if discord.opus.is_loaded():
+            #print(f"Opus library is loaded and ready to be used.")
+        #else:
+            #print(f"\n\nCritical Error: Opus Library was not loaded.\n\n")
+            #input()
+            #raise SystemExit()
+
     @client.event
     async def on_message(message):
         """If message happens."""
@@ -345,6 +353,9 @@ def run_bot():
               "This file should contain one line with the bot token.\n\n")
         input()
         raise SystemExit()
+
+
+
 
     # Start Bot
     print("Debug Log: Bot is starting to run...")
