@@ -541,7 +541,8 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         response["messages"]["1action"] = {"action": "connect", "VoiceChannel": author.voice.channel}
 
         # Plays the music
-        response["messages"]["2action"] = {"action": "play", "VoiceChannel": author.voice.channel, "music_path": "files/audio/music.mp3"}
+        response["messages"]["2action"] = {"action": "play", "VoiceChannel": author.voice.channel,
+                                           "music_path": "files/audio/music.mp3"}
 
         embed = discord.Embed(
             title=f"Connected to the voice channel **{author.voice.channel.name}**.",
@@ -570,9 +571,18 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         )
         embed.set_footer(text="Sekte Bot Settings")
 
-        embed.add_field(name=f"{prefix}settings: ",
-                        value=f"**Shows all available settings**",
+        embed.add_field(name=f"{prefix}settings ",
+                        value=f"Shows all available settings",
+                        inline=False)
+
+        embed.add_field(name=f"{prefix}settings prefix ",
+                        value=f"Allows to set a new prefix.",
                         inline=True)
+        embed.add_field(name=f"**Admin Only** Command Example: ",
+                        value=f"**{prefix}settings prefix $**",
+                        inline=True)
+
+        embed.add_field(name=chr(173), value=chr(173))
 
         response["messages"]["1embed"] = embed
 
