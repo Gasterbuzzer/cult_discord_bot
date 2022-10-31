@@ -667,7 +667,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author, f
     return response_fallback
 
 
-# Displays an error if called to the user.
+# Returns a error message, can be used to displaying.
 def raise_error(number, _response, problem, full_command, amount_problem=1, amount_normal=1, client_r=None, id_u=0):
     _response["message"] = True
     _response["multiple"] = True
