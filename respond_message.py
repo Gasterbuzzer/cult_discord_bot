@@ -619,7 +619,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author, f
 
                 embed = discord.Embed(
                     title="Setting up a new prefix:",
-                    description=f"Set the prefix to {fixed_message[2]}",
+                    description=f"Set the prefix to **'{fixed_message[2]}'**",
                     colour=discord.Colour.yellow(),
                 )
                 embed.set_footer(text="Sekte Bot Settings")
