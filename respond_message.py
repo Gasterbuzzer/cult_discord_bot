@@ -135,16 +135,18 @@ def handle_response(message, client, message_object, author):
 
     messages_all = re.findall(r"\w+", message_lower)
     messages_all_without_ = re.findall(r"\w+", message_lower[1:])
+    fixed_message = message_lower[1:].split()
 
     if message_lower[:1] == read_settings("prefix"):
         # Every Response should be a dictionary containing a True or False, if there are multiple messages.
-        return handle_message(message_lower[1:], messages_all, messages_all_without_, client, message_object, author)
+        return handle_message(message_lower[1:], messages_all, messages_all_without_, client, message_object, author,
+                              fixed_message)
     else:
         # If Message was not with a prefix, return no message
         return {"message": False}
 
 
-def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
+def handle_message(m, all_m, all_m_without_, client_r, message_object, author, fixed_message):
     """ Method checking what the command was and sending appropriate Message """
     # Default Response layout, message is if there is a message, multiple is if there are multiple responses,
     # messages contains all messages
@@ -597,13 +599,15 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
 
         prefix = read_settings("prefix")
 
-        if len(all_m_without_) >= 2:
+        if len(fixed_message) >= 2:
             # React to the user using the given settings.
 
-            if all_m_without_[1] == "prefix":
+            if fixed_message[1] == "prefix":
 
-                if len(all_m_without_) > 3:
-                    return raise_error(1, response, all_m_without_[3:], m, len(all_m_without_) - 1, 2)
+                if len(fixed_message) > 3:
+                    return raise_error(1, response, fixed_message[3:], m, len(fixed_message) - 1, 2)
+                elif len(fixed_message) == 2:
+                    return raise_error(8, response, fixed_message[1:], m, len(fixed_message), len(fixed_message) + 1)
 
                 permission_role = False
                 for role in author.roles:
@@ -611,23 +615,23 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
                         permission_role = True
 
                 if not permission_role and not main.get_dev():
-                    return raise_error(6, response, all_m_without_[1], m, client_r=client_r)
+                    return raise_error(6, response, fixed_message[1], m, client_r=client_r)
 
                 embed = discord.Embed(
                     title="Setting up a new prefix:",
-                    description=f"Set the prefix to {all_m_without_[2]}",
+                    description=f"Set the prefix to {fixed_message[2]}",
                     colour=discord.Colour.yellow(),
                 )
                 embed.set_footer(text="Sekte Bot Settings")
 
                 response["messages"]["1embed"] = embed
 
-                write_settings("prefix", all_m_without_[2])
+                write_settings("prefix", fixed_message[2])
 
                 return response
 
             else:
-                return raise_error(1, response, all_m_without_[1:], m, len(all_m_without_) - 1, 1)
+                return raise_error(1, response, fixed_message[1:], m, len(fixed_message) - 1, 1)
 
         embed = discord.Embed(
             title="Settings:",
@@ -668,6 +672,7 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
     _response["message"] = True
     _response["multiple"] = True
 
+    # Error: Too many arguments.
     if number == 1:
         embed = discord.Embed(
             title="Error:",
@@ -690,6 +695,8 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         _response["messages"]["1embed"] = embed
 
         return _response
+
+    # Error: No username provided.
     elif number == 2:
         embed = discord.Embed(
             title="Error:",
@@ -708,6 +715,8 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         _response["messages"]["1embed"] = embed
 
         return _response
+
+    # Error: Missing EXP for rankup.
     elif number == 3:
         embed = discord.Embed(
             title="Error:",
@@ -723,6 +732,8 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         _response["messages"]["1embed"] = embed
 
         return _response
+
+    # Error: Too much exp for derank.
     elif number == 4:
         embed = discord.Embed(
             title="Error:",
@@ -738,6 +749,8 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         _response["messages"]["1embed"] = embed
 
         return _response
+
+    # Error: Already the lowest rank.
     elif number == 5:
         embed = discord.Embed(
             title="Error:",
@@ -753,6 +766,8 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         _response["messages"]["1embed"] = embed
 
         return _response
+
+    # Error: No permission
     elif number == 6:
         embed = discord.Embed(
             title="Error:",
@@ -768,6 +783,8 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
         _response["messages"]["1embed"] = embed
 
         return _response
+
+    # Error: Not in a voice channel.
     elif number == 7:
         embed = discord.Embed(
             title="Error:",
@@ -780,6 +797,31 @@ def raise_error(number, _response, problem, full_command, amount_problem=1, amou
                         value=f"You must be in a voice channel in order to call this command.",
                         inline=False)
 
+        _response["messages"]["1embed"] = embed
+
+        return _response
+
+    # Error: Missing arguments.
+    elif number == 8:
+
+        embed = discord.Embed(
+            title="Error:",
+            description="Got too little arguments in command.",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot")
+
+        embed.add_field(name=f"Your Command: ",
+                        value=f"**'{full_command}'**",
+                        inline=False)
+
+        error_text = f""
+        for error in problem:
+            error_text += f"\n**'{error}'**"
+
+        embed.add_field(name=f"Was expecting {amount_normal} arguments but got {amount_problem} instead: ",
+                        value=f"{error_text}",
+                        inline=False)
         _response["messages"]["1embed"] = embed
 
         return _response
