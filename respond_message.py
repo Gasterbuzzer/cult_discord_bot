@@ -566,13 +566,13 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         embed = discord.Embed(
             title="Settings:",
             description="All Settings",
-            colour=discord.Colour.red(),
+            colour=discord.Colour.yellow(),
         )
         embed.set_footer(text="Sekte Bot Settings")
 
         embed.add_field(name=f"{prefix}settings: ",
                         value=f"**Shows all available settings**",
-                        inline=False)
+                        inline=True)
 
         response["messages"]["1embed"] = embed
 
