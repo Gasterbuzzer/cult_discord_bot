@@ -556,21 +556,26 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
 
         return response
 
-    elif all_m_without_[0] == "test2":
+    # Settings command, returns all available settings.
+    elif all_m_without_[0] == "settings":
         response["message"] = True
         response["multiple"] = True
 
-        try:
-            id_u = int(all_m_without_[1])
-        except ValueError:
-            return raise_error(2, response, all_m_without_[1], m)
+        prefix = read_settings("prefix")
 
-        member_guild = message_object.guild.get_member(id_u)
+        embed = discord.Embed(
+            title="Settings:",
+            description="All Settings",
+            colour=discord.Colour.red(),
+        )
+        embed.set_footer(text="Sekte Bot Settings")
 
-        response["messages"]["1action"] = {"action": "removerole", "member": member_guild,
-                                           "role": rank_lib.get_rank_id(-1), "user_id": id_u}
-        response["messages"]["2action"] = {"action": "addrole", "member": member_guild,
-                                           "role": rank_lib.get_rank_id(-2), "user_id": id_u}
+        embed.add_field(name=f"{prefix}settings: ",
+                        value=f"**Shows all available settings**",
+                        inline=False)
+
+        response["messages"]["1embed"] = embed
+
         return response
 
     # If Command is empty
