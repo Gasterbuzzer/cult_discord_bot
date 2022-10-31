@@ -40,6 +40,36 @@ def read_settings(search):
             print(f"Dev Log: {path_settings} not found, creating one...")
 
 
+def write_settings(search, new_value):
+    """Writes parameter to settings."""
+
+    is_dev = main.get_dev()
+
+    if not is_dev:
+        path_settings = "files/settings.json"
+    else:
+        path_settings = "files/settings_dev.json"
+
+    try:
+        with open(path_settings, "r") as f:
+            contents = json.load(f)
+
+            try:
+                contents[search] = new_value
+                with open(path_settings, "w") as f_w:
+                    json.dump(contents, f_w)
+                    print(f"Debug Log: Updated '{path_settings}' value {search} to {new_value}.")
+                return True
+            except KeyError:  # If Key does not exist or is not found, default to 1
+                print("Error Log: Was not able of writing to settings.")
+                return False
+    except FileNotFoundError:
+        with open(path_settings, "w") as f:
+            contents_ = {"prefix": "$"}
+            json.dump(contents_, f)
+            print(f"Dev Log: {path_settings} not found, creating one...")
+
+
 def create_userfile(client_r, id_u, path, data, member_guild):
     # Create user file
     is_new = True
@@ -567,6 +597,38 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
 
         prefix = read_settings("prefix")
 
+        if len(all_m_without_) >= 2:
+            # React to the user using the given settings.
+
+            if all_m_without_[1] == "prefix":
+
+                if len(all_m_without_) > 3:
+                    return raise_error(1, response, all_m_without_[3:], m, len(all_m_without_) - 1, 2)
+
+                permission_role = False
+                for role in author.roles:
+                    if role.id == rank_lib.get_rank_id(8):
+                        permission_role = True
+
+                if not permission_role and not main.get_dev():
+                    return raise_error(6, response, all_m_without_[1], m, client_r=client_r)
+
+                embed = discord.Embed(
+                    title="Setting up a new prefix:",
+                    description=f"Set the prefix to {all_m_without_[2]}",
+                    colour=discord.Colour.yellow(),
+                )
+                embed.set_footer(text="Sekte Bot Settings")
+
+                response["messages"]["1embed"] = embed
+
+                write_settings("prefix", all_m_without_[2])
+
+                return response
+
+            else:
+                return raise_error(1, response, all_m_without_[1:], m, len(all_m_without_) - 1, 1)
+
         embed = discord.Embed(
             title="Settings:",
             description="All Settings",
@@ -605,6 +667,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
 def raise_error(number, _response, problem, full_command, amount_problem=1, amount_normal=1, client_r=None, id_u=0):
     _response["message"] = True
     _response["multiple"] = True
+
     if number == 1:
         embed = discord.Embed(
             title="Error:",
