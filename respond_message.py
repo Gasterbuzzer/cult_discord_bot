@@ -251,8 +251,6 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author):
         embed.add_field(name=f"{prefix}ritual", value="Start a ritual in your current voice channel!",
                         inline=False)
 
-        embed.add_field(name=chr(173), value=chr(173))
-
         embed.add_field(name=f"{prefix}settings", value="Opens up the settings menu for the bot.",
                         inline=False)
 
