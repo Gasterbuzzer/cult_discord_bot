@@ -255,9 +255,12 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author, f
             colour=discord.Colour.yellow(),
         )
 
-        embed.add_field(name=f"Important Commands", value="Test", inline=False)
+        embed.add_field(name=f"-------------------- Important Commands --------------------", value=chr(173), inline=False)
 
         embed.add_field(name=f"{prefix}help", value="Show all commands. (This here)", inline=False)
+
+        embed.add_field(name=f"-------------------- Fullmoon Commands --------------------", value=chr(173),
+                        inline=False)
 
         embed.add_field(name=f"{prefix}moon", value="Show the **'current'** Moon State", inline=False)
 
@@ -265,6 +268,12 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author, f
 
         embed.add_field(name=f"{prefix}nextfullmoon",
                         value="Show when the next fullmoon is **'coming'** in the future.", inline=False)
+
+        embed.add_field(name=f"{prefix}ritual", value="Start a ritual in your current voice channel!",
+                        inline=False)
+
+        embed.add_field(name=f"-------------------- Management Commands --------------------", value=chr(173),
+                        inline=False)
 
         embed.add_field(name=f"{prefix}getuser", value="Shows the EXP and Rank of a User in the server.", inline=True)
         embed.add_field(name=f"Example", value=f"**'{prefix}getuser @Lucas**'", inline=True)
@@ -281,9 +290,6 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author, f
         embed.add_field(name=f"Example", value=f"**'{prefix}derank @Lucas**'", inline=True)
 
         embed.add_field(name=chr(173), value=chr(173))
-
-        embed.add_field(name=f"{prefix}ritual", value="Start a ritual in your current voice channel!",
-                        inline=False)
 
         embed.add_field(name=f"{prefix}settings", value="Opens up the settings menu for the bot.",
                         inline=False)
@@ -669,7 +675,7 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author, f
     return response_fallback
 
 
-# Returns a error message, can be used to displaying.
+# Returns an error message, can be used to displaying.
 def raise_error(number, _response, problem, full_command, amount_problem=1, amount_normal=1, client_r=None, id_u=0):
     _response["message"] = True
     _response["multiple"] = True
