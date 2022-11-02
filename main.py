@@ -355,7 +355,7 @@ def run_bot():
         filename = "discordt.txt"
     token = None
     try:
-        print("Debug Log: Reading token from discordt.txt ...")
+        print(f"Debug Log: Reading token from {filename} ...")
         with open(path) as f:
             token = f.read()
             print("Debug Log: Token grabbed.")

@@ -255,6 +255,8 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author, f
             colour=discord.Colour.yellow(),
         )
 
+        embed.add_field(name=f"Important Commands", value="Test", inline=False)
+
         embed.add_field(name=f"{prefix}help", value="Show all commands. (This here)", inline=False)
 
         embed.add_field(name=f"{prefix}moon", value="Show the **'current'** Moon State", inline=False)
