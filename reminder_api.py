@@ -25,7 +25,7 @@ def days_to_fullmoon():
 
     if not moon_api.is_fullmoon_over(fullmoon_day):
         # If fullmoon is this month now.
-        days = dmy[0] - int(fullmoon_day)
+        days = int(fullmoon_day) - dmy[0]
     else:
         # If fullmoon is next month.
 
@@ -107,4 +107,4 @@ if __name__ == "__main__":
     # print(update_days())
     # print(need_remind())
     # print(is_reminded())
-    print(is_reminded())
+    print(days_to_fullmoon())
