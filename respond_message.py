@@ -129,7 +129,7 @@ def create_userfile(client_r, id_u, path, data, member_guild):
         return is_new
 
 
-def handle_response(message, client, message_object, author):
+def handle_response(message, client, message_object, author, ignore_prefix=False):
     """Function to handling messages"""
     message_lower = message.lower()
 
@@ -137,6 +137,12 @@ def handle_response(message, client, message_object, author):
     messages_all_without_ = re.findall(r"\w+", message_lower[1:])
     fixed_message = message_lower[1:].split()
 
+    # If a command gets called from the programm and not a User, this gets called instead.
+    if ignore_prefix:
+        return handle_message(message_lower, messages_all, messages_all_without_, client, message_object, author,
+                              fixed_message)
+
+    # If it was a user, that called the command.
     if message_lower[:1] == read_settings("prefix"):
         # Every Response should be a dictionary containing a True or False, if there are multiple messages.
         return handle_message(message_lower[1:], messages_all, messages_all_without_, client, message_object, author,
@@ -257,11 +263,13 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author, f
 
         emoji = '<:moon:1037411161634775131>'
 
-        embed.add_field(name=f"{emoji}-------------------- Important Commands ------------------------{emoji}", value=chr(173), inline=False)
+        embed.add_field(name=f"{emoji}-------------------- Important Commands ------------------------{emoji}",
+                        value=chr(173), inline=False)
 
         embed.add_field(name=f"{prefix}help", value="Show all commands. (This here)", inline=False)
 
-        embed.add_field(name=f"{emoji}-------------------- Fullmoon Commands -------------------------{emoji}", value=chr(173),
+        embed.add_field(name=f"{emoji}-------------------- Fullmoon Commands -------------------------{emoji}",
+                        value=chr(173),
                         inline=False)
 
         embed.add_field(name=f"{prefix}moon", value="Show the **'current'** Moon State", inline=False)
@@ -274,7 +282,8 @@ def handle_message(m, all_m, all_m_without_, client_r, message_object, author, f
         embed.add_field(name=f"{prefix}ritual", value="Start a ritual in your current voice channel!",
                         inline=False)
 
-        embed.add_field(name=f"{emoji}-------------------- Management Commands -------------------{emoji}", value=chr(173),
+        embed.add_field(name=f"{emoji}-------------------- Management Commands -------------------{emoji}",
+                        value=chr(173),
                         inline=False)
 
         embed.add_field(name=f"{prefix}getuser", value="Shows the EXP and Rank of a User in the server.", inline=True)

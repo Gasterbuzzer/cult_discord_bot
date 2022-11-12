@@ -7,6 +7,7 @@ import json
 # Import Custom libraries
 import discord
 from discord.ext import tasks
+from discord import app_commands
 
 import reminder_api
 # Import my libraries
@@ -264,6 +265,7 @@ def run_bot():
     intents = discord.Intents.all()
     intents.message_content = True
     client = discord.Client(intents=intents, activity=discord.Game(name=start_activity))
+    tree = app_commands.CommandTree(client)
 
     @tasks.loop(hours=24.0)
     async def send_message_to_me():
@@ -327,6 +329,25 @@ def run_bot():
             send_message_to_me.start()
         else:
             print(f"\n\n DEV Log: Developer environment found, some functionality is disabled. \n\n")
+        # App Commands.
+        try:
+            synced = await tree.sync(guild=None)
+            print(f"Debug Log: Synced slash commands with Command Tree.")
+        except Exception as e:
+            print(f"Error Log: Encountered Error while syncing:  {e}.")
+
+    # A slash command for help.
+    @tree.command(name="help", description="Displays help info of discord bot.", nsfw=False, guild=None)
+    async def helps(interaction: discord.Interaction):
+        print(f"Debug Log: Slash Command 'help' was used.")
+
+        response = respond_message.handle_response(message="help", client=client, message_object=interaction.message,
+                                                   author=interaction.user, ignore_prefix=True)
+
+        embed = response['messages']["1embed"]
+        file = response['messages']['0e_image']
+
+        await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
 
     @client.event
     async def on_message(message):
