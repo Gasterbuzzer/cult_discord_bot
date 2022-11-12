@@ -137,7 +137,7 @@ def handle_response(message, client, message_object, author, ignore_prefix=False
     messages_all_without_ = re.findall(r"\w+", message_lower[1:])
     fixed_message = message_lower[1:].split()
 
-    # If a command gets called from the programm and not a User, this gets called instead.
+    # If a command gets called from the program and not a User, this gets called instead.
     if ignore_prefix:
         return handle_message(message_lower, messages_all, messages_all_without_, client, message_object, author,
                               fixed_message)
